@@ -1,0 +1,60 @@
+/* Use global design tokens from src/index.css */
+body{background:var(--bg);font-family:var(--sans);color:var(--text)}
+.br-card{background:var(--card);border-radius:12px;padding:18px;box-shadow:4px 6px 0 rgba(0,0,0,0.08);border:2px solid rgba(0,0,0,0.05);}
+.br-btn{padding:12px 18px;border-radius:10px;border:2px solid rgba(0,0,0,0.08);cursor:pointer;background:var(--accent);color:var(--primary);font-weight:600}
+.br-btn-primary{background:var(--accent)}
+.br-input{width:100%;padding:12px;border-radius:8px;border:1px solid #ccc;background:#fafafa}
+.login-card{max-width:420px;margin:30px auto}
+.login-hero{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px}
+.login-hero h1{margin:0}
+.login-actions{display:flex;flex-direction:column;gap:12px}
+
+/* Login (stitch) styles */
+.login-container{display:flex;align-items:center;justify-content:center;padding:48px 16px}
+.login-container{min-height:100vh;background:radial-gradient(circle at 20% 10%, rgba(200,240,230,0.4), transparent 20%), var(--bg)}
+.login-card{max-width:560px;width:100%;padding:42px;border-radius:22px;box-shadow:0 12px 0 rgba(0,0,0,0.06), inset 0 -6px 0 rgba(0,0,0,0.02);border:3px solid rgba(0,0,0,0.06);background:linear-gradient(180deg,#fff,#fff)}
+.login-hero h1{font-size:40px;line-height:1;margin:0;color:#111;font-weight:800}
+.login-hero p{margin:0;color:var(--muted)}
+.br-btn-google{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;background:#fbfbfc;color:#111;padding:14px;border-radius:12px;font-weight:700;border:2px solid rgba(0,0,0,0.06);transition:all 0.2s}
+.br-btn-google:hover{background:#f1f1f1;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+.br-btn-google .g-icon{position:absolute;left:18px;display:inline-flex;align-items:center;justify-content:center}
+.br-btn-google svg{width:20px;height:20px}
+.br-btn-google{width:100%;box-sizing:border-box;padding-left:62px}
+.divider-row{display:flex;align-items:center;gap:12px;margin:18px 0;justify-content:center}
+.divider-row hr{flex:1;border:none;height:1px;background:#e6e6e6}
+.divider-row .or{padding:6px 16px;color:var(--muted);font-weight:700;letter-spacing:1px}
+.field-label{display:block;margin:6px 0 6px;color:#222;font-weight:600}
+.br-input{padding:16px 18px;border-radius:14px;border:1px solid #dcdcdc;background:#fbfbfc;box-shadow:inset 0 2px 0 rgba(255,255,255,0.6);width:100%;box-sizing:border-box}
+.br-input::placeholder{color:#c9c9cf}
+.sign-in-btn{display:block;margin:18px 0 0;padding:14px;border-radius:14px;background:#e7dfca;color:#111;border:2px solid rgba(0,0,0,0.08);font-weight:700;width:100%}
+.create-account{display:block;text-align:center;margin-top:18px;color:var(--primary);font-weight:600}
+.forgot-link{float:right;color:var(--primary);font-weight:600}
+
+/* Stitch-like book list */
+.book-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;padding:6px}
+.book-item{display:flex;gap:12px;align-items:flex-start;padding:18px;border-radius:14px;border:3px solid rgba(0,0,0,0.06);background:linear-gradient(180deg,#fff,#fff);box-shadow:0 10px 0 rgba(0,0,0,0.06)}
+.book-cover{width:96px;height:128px;border-radius:8px;background:#eaeaea;flex-shrink:0;box-shadow:0 6px 0 rgba(0,0,0,0.06)}
+.book-meta{flex:1}
+.book-meta h3{margin:0;font-size:18px;line-height:1.1;color:var(--primary);font-weight:800}
+.book-meta p{margin:6px 0;color:var(--muted)}
+.progress-wrap{display:flex;align-items:center;gap:12px;margin-top:8px}
+.progress-bar{flex:1;height:8px;background:#f1f1f1;border-radius:8px;overflow:hidden}
+.progress-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#bfe6cf)}
+.continue-btn{padding:8px 12px;border-radius:10px;background:#e7dfca;border:2px solid rgba(0,0,0,0.06);font-weight:700}
+
+/* Upload progress */
+.upload-progress{margin-top:8px;height:10px;background:#f1f1f1;border-radius:10px;overflow:hidden}
+.upload-progress > i{display:block;height:100%;background:linear-gradient(90deg,#bfe6cf,#8fd6b6);width:0%}
+
+/* UI polish to match login ref */
+.header{background:linear-gradient(180deg, #fff, #fbfbfc);padding:18px;border-bottom:3px solid rgba(0,0,0,0.06);box-shadow:0 8px 0 rgba(0,0,0,0.02)}
+.app-root{width:100%;max-width:none;margin:0}
+.book-list{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+.book-item{padding:22px;border-radius:18px}
+.book-cover{width:140px;height:190px}
+.book-meta h3{font-size:20px}
+
+@media(max-width:520px){
+  .login-card{padding:22px}
+  .login-hero h1{font-size:28px}
+}

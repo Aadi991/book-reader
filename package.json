@@ -1,0 +1,40 @@
+{
+  "name": "book-reader-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@8.8.0",
+  "scripts": {
+    "dev": "vite",
+    "dev:fixport": "kill-port 5173 5174 5175 5176 5177 5178 5179 5180 5181 5182 5183 || true && vite",
+    "build": "vite build",
+    "clear:storage": "node scripts/clear_storage_and_firestore.js",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "bootstrap": "pnpm -w install",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.32.0",
+    "firebase": "^10.0.0",
+    "pdfjs-dist": "^3.6.172",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-icons": "^5.6.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "kill-port": "^2.0.1",
+    "prettier": "^2.8.8",
+    "supabase": "^2.104.0",
+    "tailwindcss": "^4.3.0",
+    "vite": "^8.0.12"
+  }
+}

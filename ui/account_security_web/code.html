@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account Settings - Bibliophile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#abcec2",
+                        "on-secondary-container": "#666353",
+                        "on-primary-fixed": "#002019",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#517167",
+                        "primary-fixed": "#c6eadd",
+                        "primary": "#44655b",
+                        "tertiary-container": "#efebff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#d1f5e8",
+                        "background": "#faf8ff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#6b697b",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#2d4d44",
+                        "inverse-primary": "#abcec2",
+                        "surface-dim": "#d2d9f4",
+                        "tertiary-fixed-dim": "#c8c4d8",
+                        "surface-container-low": "#f2f3ff",
+                        "secondary-container": "#e5e0cc",
+                        "secondary-fixed": "#e8e2cf",
+                        "surface-container-highest": "#dae2fd",
+                        "outline": "#717975",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "on-background": "#131b2e",
+                        "on-surface": "#131b2e",
+                        "surface-tint": "#44655b",
+                        "on-tertiary-fixed": "#1b1a29",
+                        "surface-variant": "#dae2fd",
+                        "surface-bright": "#faf8ff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c1c8c4",
+                        "secondary": "#625f4f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#eaedff",
+                        "surface": "#faf8ff",
+                        "inverse-on-surface": "#eef0ff",
+                        "surface-container-high": "#e2e7ff",
+                        "on-tertiary-fixed-variant": "#464555",
+                        "tertiary": "#5e5c6e",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e4e0f5",
+                        "on-secondary-fixed": "#1e1c10",
+                        "on-surface-variant": "#414845",
+                        "inverse-surface": "#283044",
+                        "error-container": "#ffdad6"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "gutter-md": "16px",
+                        unit: "4px",
+                        "margin-mobile": "20px",
+                        "section-gap": "32px",
+                        "card-padding": "24px"
+                    },
+                    fontFamily: {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-bold": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-ui": ["Plus Jakarta Sans"],
+                        "body-reading": ["Literata"]
+                    },
+                    fontSize: {
+                        "display-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        "label-bold": ["14px", { lineHeight: "20px", fontWeight: "700" }],
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "700" }],
+                        "label-sm": ["12px", { lineHeight: "16px", fontWeight: "600" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+                        "body-ui": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+                        "body-reading": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        /* Neo-Brutalist utilities */
+        .brutal-border { border: 2px solid theme('colors.on-surface'); }
+        .brutal-shadow { box-shadow: 4px 4px 0px 0px theme('colors.on-surface'); transition: all 0.2s ease; }
+        .brutal-shadow:active { box-shadow: 2px 2px 0px 0px theme('colors.on-surface'); transform: translate(2px, 2px); }
+        .brutal-input { border: 2px solid theme('colors.on-surface'); background-color: theme('colors.secondary-container'); transition: all 0.2s ease; }
+        .brutal-input:focus { outline: none; border-color: theme('colors.primary'); box-shadow: 4px 4px 0px 0px theme('colors.primary-fixed-dim'); transform: translate(-2px, -2px); }
+        
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: theme('colors.primary'); background-color: theme('colors.primary'); }
+        .toggle-checkbox:checked + .toggle-label { background-color: theme('colors.primary-container'); border-color: theme('colors.primary'); }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-x-hidden font-body-ui text-body-ui bg-background">
+<!-- SideNavBar (Desktop Only) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col p-margin-mobile bg-background border-r-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-64 z-50">
+<div class="mb-section-gap flex items-center gap-unit">
+<span class="material-symbols-outlined text-display-lg text-primary" data-icon="book_4">book_4</span>
+<h1 class="font-display-lg text-display-lg text-on-surface">Bibliophile</h1>
+</div>
+<div class="flex items-center gap-3 mb-8 p-3 brutal-border rounded-xl bg-surface-container-low">
+<div class="w-10 h-10 rounded-full bg-secondary-container brutal-border overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close up portrait of a young man with a slight smile, wearing a casual shirt. The lighting is soft and natural, emphasizing a calm and approachable demeanor. The background is a blurred, bright setting. The style fits a light, neo-brutalist digital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBR_CvoEzzucN4XS8aF-SJAJpCOopCenY8zlhypcFKiR7L0wnEFojlTIBmhV8gItH3e5zL4rhgPhbio-vA-DW47EjOp616zQ-O383naliTR5jfGco419KfZCuGUqrZlKYFUfp2eTWgtOv2dpNJekazytI-XxW04aZLXJR8M7i0Qe2IgvgdtfqVS2EQGj7fC2SM4IC5vbtT5xRxB2xTcweW21pUql9Au7btR9tAjVq1WI--Jk-0xW508lXv-sbKtM_TpWc8mg7uthxA"/>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-on-surface">User Profile</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Personal Reader</p>
+</div>
+</div>
+<button class="mb-8 w-full py-3 px-4 bg-primary text-on-primary font-label-bold text-label-bold rounded-xl brutal-border brutal-shadow flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+            New Collection
+        </button>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 p-3 rounded-xl font-body-ui text-body-ui text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+                    Library
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-xl font-body-ui text-body-ui text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+                    Continue Reading
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-xl font-body-ui text-body-ui text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                    Downloads
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-xl font-body-ui text-body-ui text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+                    Bookmarks
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-xl font-body-ui text-body-ui text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="sticky_note_2">sticky_note_2</span>
+                    Notes
+                </a>
+</li>
+<li class="mt-auto">
+<a class="flex items-center gap-3 p-3 rounded-xl font-body-ui text-body-ui bg-primary-container text-on-primary-container border-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] -translate-y-0.5 hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow ml-0 md:ml-64 w-full md:w-[calc(100%-16rem)] min-h-screen pb-20 md:pb-0">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-section-gap sticky top-0 z-40 bg-surface h-20 border-b-2 border-on-surface">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Account &amp; Security</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container hover:bg-primary-container text-on-surface transition-colors brutal-border">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container hover:bg-primary-container text-on-surface transition-colors brutal-border">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+</button>
+<button class="hidden md:flex py-2 px-4 bg-primary-container text-on-primary-container font-label-bold text-label-bold rounded-xl brutal-border brutal-shadow items-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    Add Book
+                </button>
+<div class="w-10 h-10 rounded-full border-2 border-on-surface overflow-hidden bg-secondary-container">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Small thumbnail portrait of a young man, matching the main avatar. Bright, clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtd-_xZS6TIEKEXZC-4MVpoVZoLaLRepgRcMxl2hh2lG6w76VoMx-rjrHL3xYBK4lsCT_hNQ2Dnnuxj5YVTYlUbI0sOlHZAGLV0OOaeEtWzdDYNG1IY_EpUL0yQ_zwyk1xmFk7cI3CAHZL5tat8DwvxhLixjUrGDOOw3aOL4tm0BTv_LzkiNEL5bSJS-psfs9pWqnTmIbeEuy_CYapklS0ankRAE_7dKbE3WZcW7yZZLQIWASBMycF46xkfjx6NrGJ7gcXgCqnxa_B"/>
+</div>
+</div>
+</header>
+<div class="p-section-gap max-w-4xl mx-auto space-y-8">
+<!-- Profile Section (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Avatar Card -->
+<div class="md:col-span-1 bg-surface-container-highest p-card-padding rounded-xl brutal-border brutal-shadow flex flex-col items-center justify-center relative">
+<div class="relative group cursor-pointer">
+<div class="w-32 h-32 rounded-full border-4 border-on-surface overflow-hidden bg-secondary-container mb-4">
+<img alt="Large Profile Picture" class="w-full h-full object-cover" data-alt="A high-quality, bright portrait of a young man with a gentle expression. The background is a clean, neutral tone. The aesthetic is modern, high-contrast, and tailored for a crisp digital user interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByscDX2WcjerEMOdHxyRraUcHBXb4JFimg6stl2CZMJO-bVSMwsHGJfvfheKOC2dqG0Ed5C_t23NtPDd3owIEwrZUnduZyA5_lRaLLULNVLa9NFSNTzAfAuIBZeMAaoeN59Zw1Oe-wkOjkWQIPAuS_OAQI1dYNMoJKvTRmxngzSrym_io2_qpGnY2Yqu685QfjJYfo9SqFK9n6MWhkCDfBVSA78WASexqheCmkZ2H2Dh3MX9Xo9pEyIutwMi_S7AiI0J0WpTuK9Ce_"/>
+</div>
+<div class="absolute bottom-4 right-0 w-10 h-10 bg-primary text-on-primary rounded-full brutal-border flex items-center justify-center brutal-shadow group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Alex Reader</h3>
+<p class="font-label-bold text-label-bold text-on-surface-variant">Free Plan</p>
+</div>
+<!-- Basic Info Card -->
+<div class="md:col-span-2 bg-surface p-card-padding rounded-xl brutal-border flex flex-col justify-center space-y-6 relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed-dim rounded-full mix-blend-multiply filter blur-2xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface border-b-2 border-on-surface pb-2 border-dashed">Basic Information</h3>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<label class="font-label-bold text-label-bold text-on-surface" for="displayName">Display Name</label>
+<input class="brutal-input p-3 rounded-lg w-full font-body-ui text-body-ui text-on-surface" id="displayName" type="text" value="Alex Reader"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-bold text-label-bold text-on-surface" for="emailAddress">Email Address</label>
+<input class="brutal-input p-3 rounded-lg w-full font-body-ui text-body-ui text-on-surface" id="emailAddress" type="email" value="alex.reader@example.com"/>
+</div>
+</div>
+<div class="flex justify-end pt-2">
+<button class="px-6 py-2 bg-primary text-on-primary font-label-bold text-label-bold rounded-xl brutal-border brutal-shadow hover:bg-on-primary-fixed transition-colors">
+                            Save Changes
+                        </button>
+</div>
+</div>
+</section>
+<!-- Security & Linked Accounts -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Security Card -->
+<div class="bg-surface p-card-padding rounded-xl brutal-border space-y-6 relative">
+<div class="flex items-center gap-2 border-b-2 border-on-surface pb-2 border-dashed">
+<span class="material-symbols-outlined text-primary" data-icon="security">security</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Security</h3>
+</div>
+<div class="space-y-6">
+<div class="flex flex-col items-start gap-3">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface">Password</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Last changed 3 months ago</p>
+</div>
+<button class="px-4 py-2 bg-secondary-container text-on-secondary-container font-label-bold text-label-bold rounded-xl brutal-border hover:bg-surface-container-highest transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="key">key</span>
+                                Change Password
+                            </button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl brutal-border">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface">Two-Factor Auth</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Add extra security</p>
+</div>
+<!-- Toggle Switch -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-surface border-2 border-on-surface appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle2fa" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-primary-container border-2 border-on-surface cursor-pointer" for="toggle2fa"></label>
+</div>
+</div>
+</div>
+</div>
+<!-- Linked Accounts Card -->
+<div class="bg-surface p-card-padding rounded-xl brutal-border space-y-6">
+<div class="flex items-center gap-2 border-b-2 border-on-surface pb-2 border-dashed">
+<span class="material-symbols-outlined text-primary" data-icon="link">link</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Linked Accounts</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 rounded-xl brutal-border bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface rounded-full brutal-border flex items-center justify-center">
+<span class="font-label-bold text-label-bold">G</span>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-on-surface">Google</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Connected</p>
+</div>
+</div>
+<button class="text-error font-label-bold text-label-bold hover:underline">Disconnect</button>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl brutal-border bg-surface-container-low border-dashed">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface rounded-full brutal-border flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="mail">mail</span>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-on-surface">Alternative Email</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Not connected</p>
+</div>
+</div>
+<button class="text-primary font-label-bold text-label-bold hover:underline">Connect</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<section class="mt-12 bg-error-container p-card-padding rounded-xl brutal-border flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-error-container flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+                        Danger Zone
+                    </h3>
+<p class="font-body-ui text-body-ui text-on-error-container mt-1 max-w-md">Once you delete your account, there is no going back. Please be certain.</p>
+</div>
+<button class="px-6 py-3 bg-error text-on-error font-label-bold text-label-bold rounded-xl brutal-border brutal-shadow hover:bg-on-error-container transition-colors whitespace-nowrap">
+                    Delete Account
+                </button>
+</section>
+</div>
+</main>
+<script>
+        // Simple toggle logic for visual feedback if needed, though CSS handles the basic state
+        const toggle = document.getElementById('toggle2fa');
+        toggle.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                // Logic for enabling 2FA
+                console.log('2FA Enabled');
+            } else {
+                // Logic for disabling 2FA
+                console.log('2FA Disabled');
+            }
+        });
+    </script>
+</body></html>

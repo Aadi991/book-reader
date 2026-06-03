@@ -1,0 +1,95 @@
+-- Supabase Storage RLS policies for book-reader
+-- Buckets expected: Covers, Books
+
+-- Cleanup (safe to rerun)
+drop policy if exists covers_select_public on storage.objects;
+drop policy if exists covers_insert_public_jpg_anon on storage.objects;
+drop policy if exists covers_update_public_jpg_anon on storage.objects;
+drop policy if exists books_select_public on storage.objects;
+drop policy if exists books_insert_public_pdf_anon on storage.objects;
+drop policy if exists books_update_public_pdf_anon on storage.objects;
+
+-- COVERS bucket
+create policy covers_select_public
+on storage.objects
+for select
+to public
+using (
+  bucket_id = 'Covers'
+  and lower((storage.foldername(name))[1]) = 'public'
+);
+
+create policy covers_insert_public_jpg_anon
+on storage.objects
+for insert
+to anon
+with check (
+  bucket_id = 'Covers'
+  and lower(storage.extension(name)) = 'jpg'
+  and lower((storage.foldername(name))[1]) = 'public'
+  and auth.role() = 'anon'
+);
+
+create policy covers_update_public_jpg_anon
+on storage.objects
+for update
+to anon
+using (
+  bucket_id = 'Covers'
+  and lower(storage.extension(name)) = 'jpg'
+  and lower((storage.foldername(name))[1]) = 'public'
+  and auth.role() = 'anon'
+)
+with check (
+  bucket_id = 'Covers'
+  and lower(storage.extension(name)) = 'jpg'
+  and lower((storage.foldername(name))[1]) = 'public'
+  and auth.role() = 'anon'
+);
+
+-- BOOKS bucket
+create policy books_select_public
+on storage.objects
+for select
+to public
+using (
+  bucket_id = 'Books'
+  and lower((storage.foldername(name))[1]) = 'public'
+);
+
+create policy books_insert_public_pdf_anon
+on storage.objects
+for insert
+to anon
+with check (
+  bucket_id = 'Books'
+  and lower(storage.extension(name)) = 'pdf'
+  and lower((storage.foldername(name))[1]) = 'public'
+  and auth.role() = 'anon'
+);
+
+create policy books_update_public_pdf_anon
+on storage.objects
+for update
+to anon
+using (
+  bucket_id = 'Books'
+  and lower(storage.extension(name)) = 'pdf'
+  and lower((storage.foldername(name))[1]) = 'public'
+  and auth.role() = 'anon'
+)
+with check (
+  bucket_id = 'Books'
+  and lower(storage.extension(name)) = 'pdf'
+  and lower((storage.foldername(name))[1]) = 'public'
+  and auth.role() = 'anon'
+);
+
+-- Optional: create buckets if missing
+insert into storage.buckets (id, name, public)
+values ('Covers', 'Covers', true)
+on conflict (id) do nothing;
+
+insert into storage.buckets (id, name, public)
+values ('Books', 'Books', true)
+on conflict (id) do nothing;

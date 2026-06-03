@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Upload Series Volumes - Bibliophile</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            font-feature-settings: 'liga';
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#dae2fd",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#414845",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#e4e0f5",
+                        "secondary": "#625f4f",
+                        "surface-variant": "#dae2fd",
+                        "surface": "#faf8ff",
+                        "inverse-surface": "#283044",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-tertiary-fixed-variant": "#464555",
+                        "on-primary-fixed-variant": "#2d4d44",
+                        "tertiary-fixed-dim": "#c8c4d8",
+                        "tertiary-container": "#efebff",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#eaedff",
+                        "inverse-primary": "#abcec2",
+                        "background": "#faf8ff",
+                        "primary-fixed": "#c6eadd",
+                        "on-secondary-fixed": "#1e1c10",
+                        "on-secondary-container": "#666353",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#abcec2",
+                        "outline": "#717975",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#517167",
+                        "outline-variant": "#c1c8c4",
+                        "on-tertiary-container": "#6b697b",
+                        "primary-container": "#d1f5e8",
+                        "on-surface": "#131b2e",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "on-tertiary-fixed": "#1b1a29",
+                        "secondary-container": "#e5e0cc",
+                        "surface-tint": "#44655b",
+                        "on-primary-fixed": "#002019",
+                        "tertiary": "#5e5c6e",
+                        "surface-container-low": "#f2f3ff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e2e7ff",
+                        "secondary-fixed": "#e8e2cf",
+                        "surface-dim": "#d2d9f4",
+                        "surface-bright": "#faf8ff",
+                        "primary": "#44655b",
+                        "on-background": "#131b2e",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-padding": "24px",
+                        "section-gap": "32px",
+                        "margin-mobile": "20px",
+                        "gutter-md": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-ui": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-reading": ["Literata"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-bold": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-ui": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "body-reading": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "label-bold": ["14px", { "lineHeight": "20px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-ui min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- Persistent Side Navigation -->
+<nav class="fixed left-0 top-0 h-full flex flex-col p-margin-mobile bg-background w-64 border-r-2 border-on-surface z-50">
+<!-- Brand -->
+<div class="mb-10 px-4">
+<h1 class="font-display-lg text-display-lg text-on-surface">Bibliophile</h1>
+<p class="font-label-bold text-label-bold text-on-surface-variant">Personal Reader</p>
+</div>
+<!-- CTA -->
+<button class="mb-8 w-full py-3 px-4 rounded-xl border-2 border-on-surface bg-surface text-on-surface font-label-bold text-label-bold shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:bg-primary-container hover:text-on-primary-container transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">add</span>
+            New Collection
+        </button>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2 flex-grow">
+<!-- Active Tab: Library (Intent match for uploading content) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-container text-on-primary-container border-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] -translate-y-0.5 font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">library_books</span>
+                Library
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">play_circle</span>
+                Continue Reading
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">download</span>
+                Downloads
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bookmark</span>
+                Bookmarks
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">sticky_note_2</span>
+                Notes
+            </a>
+</div>
+<!-- Bottom Link -->
+<div class="mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen px-section-gap py-10 w-[calc(100%-16rem)]">
+<!-- Header -->
+<header class="mb-section-gap flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Upload Series Volumes</h2>
+<p class="font-body-ui text-body-ui text-on-surface-variant">Drag and drop multiple PDF files to add them to your new collection.</p>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface flex items-center gap-1 font-label-bold text-label-bold">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+                Cancel
+            </button>
+</header>
+<!-- Drop Zone (Neo-Brutalist structural component) -->
+<div class="w-full border-2 border-dashed border-on-surface rounded-xl bg-surface hover:bg-surface-container-low transition-colors duration-200 flex flex-col items-center justify-center py-16 mb-section-gap cursor-pointer relative group">
+<div class="absolute inset-0 bg-primary-container opacity-0 group-hover:opacity-10 rounded-xl transition-opacity"></div>
+<div class="w-16 h-16 rounded-full bg-primary-container border-2 border-on-surface flex items-center justify-center mb-4 shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] group-hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] group-hover:-translate-y-1 transition-all">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 0; font-size: 32px;">upload_file</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Drop your PDF series here</h3>
+<p class="font-body-ui text-body-ui text-on-surface-variant">or click to browse from your device (Max 50MB per file)</p>
+</div>
+<!-- Volumes List Section -->
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-center mb-6 border-b-2 border-on-surface pb-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Volumes List <span class="text-on-surface-variant font-body-ui text-body-ui ml-2">(3 files)</span></h3>
+<div class="flex gap-2">
+<button class="p-2 border-2 border-on-surface rounded-lg bg-surface text-on-surface hover:bg-surface-container shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all">
+<span class="material-symbols-outlined block" style="font-variation-settings: 'FILL' 1; font-size: 20px;">grid_view</span>
+</button>
+<button class="p-2 border-2 border-on-surface rounded-lg bg-surface-container-lowest text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined block" style="font-variation-settings: 'FILL' 0; font-size: 20px;">view_list</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid for uploaded files -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-gutter-md">
+<!-- Volume Card 1 -->
+<article class="bg-surface border-2 border-on-surface rounded-xl p-card-padding flex flex-col gap-4 shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative group">
+<div class="absolute top-4 right-4 z-10">
+<button aria-label="Delete volume" class="w-8 h-8 flex items-center justify-center rounded-full bg-surface border-2 border-on-surface text-error hover:bg-error-container hover:text-on-error-container transition-colors shadow-[2px_2px_0px_0px_rgba(19,27,46,1)]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0; font-size: 18px;">delete</span>
+</button>
+</div>
+<!-- Document Preview area -->
+<div class="w-full aspect-[3/4] bg-surface-container border-2 border-on-surface rounded-lg overflow-hidden relative flex items-center justify-center">
+<img alt="" class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="A minimalist architectural detail showing a soft beige concrete wall with subtle curved shadows and a smooth, tactile surface. The lighting is bright and diffuse, evoking a calm, scholarly aesthetic appropriate for a modern design system. The composition is simple and structural." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlx439AJaLkpZEBBw5ffkan_Mw8eXlw_A5tiRtZWnNmVRHEftw25k1FB_Tx--ssAV2UyguRvKi0Vjr7s17FSjX9ivW3b4So0igYNEM5HoUo0DUvN-Xenzeta7JJKu8bVc4SIe1sQD2S3mlFLnC5pcyYhhR10onCcuHKcx_qeEKzm8lKXI3AW6YOWATvUi7j3wRZA3UuPGuyRgzC8QTKRnmMDVjNk5PFGzdq-Rx1I4E0B80LHN8PhqBxop1DB0TouG-bAc_Q8Ca1P9a"/>
+<div class="absolute bottom-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">
+                            Vol. 1
+                        </div>
+</div>
+<!-- Details -->
+<div class="flex-1 flex flex-col">
+<h4 class="font-label-bold text-label-bold text-on-surface truncate" title="the-foundation-of-everything-vol1.pdf">the-foundation-of-everything-vol1.pdf</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">12.4 MB • 342 Pages</p>
+</div>
+<!-- Actions -->
+<div class="flex gap-2 mt-2 pt-4 border-t-2 border-dashed border-on-surface">
+<button class="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-surface text-on-surface font-label-bold text-label-sm text-center hover:bg-surface-container shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all">
+                            Change Page
+                        </button>
+<button class="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-primary-container text-on-primary-container font-label-bold text-label-sm text-center hover:bg-primary-fixed shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all">
+                            Set Thumb
+                        </button>
+</div>
+</article>
+<!-- Volume Card 2 -->
+<article class="bg-surface border-2 border-on-surface rounded-xl p-card-padding flex flex-col gap-4 shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative group">
+<div class="absolute top-4 right-4 z-10">
+<button aria-label="Delete volume" class="w-8 h-8 flex items-center justify-center rounded-full bg-surface border-2 border-on-surface text-error hover:bg-error-container hover:text-on-error-container transition-colors shadow-[2px_2px_0px_0px_rgba(19,27,46,1)]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0; font-size: 18px;">delete</span>
+</button>
+</div>
+<!-- Document Preview area -->
+<div class="w-full aspect-[3/4] bg-surface-container border-2 border-on-surface rounded-lg overflow-hidden relative flex items-center justify-center">
+<img alt="" class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="A close-up abstract view of stacked paper edges, creating a textural, rhythmic pattern in soft cream and pale gray tones. The lighting highlights the fine texture of the paper grain. The overall mood is quiet, academic, and focused, aligning with a premium digital reading environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZgy93isw_zYTlXaaDX2dsO9jUTIjfrpiQkIyymHjX_YMfaMvVbHUuUR0Etw_EnPiflhNpvK38pva0pNoFeP1wvFlIGgz4rEj2x06U1mgoZpaL1sKEh3m0QmkWbMfq5jT8i98gy1sk65WwMEQVNf8Iyyq64XEZYNUmTIzA9A4w1W0EfV6UbT8LYhJ5Z0gQrC84E3zj0kA7A9MV0atV_lm1jSXLAivQcjh9cIkijIeLHH-ztlNliHOK3Bp5scoKS5zxB7d_ZGZC59rv"/>
+<div class="absolute bottom-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">
+                            Vol. 2
+                        </div>
+</div>
+<!-- Details -->
+<div class="flex-1 flex flex-col">
+<h4 class="font-label-bold text-label-bold text-on-surface truncate" title="the-foundation-of-everything-vol2.pdf">the-foundation-of-everything-vol2.pdf</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">14.1 MB • 380 Pages</p>
+</div>
+<!-- Actions -->
+<div class="flex gap-2 mt-2 pt-4 border-t-2 border-dashed border-on-surface">
+<button class="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-surface text-on-surface font-label-bold text-label-sm text-center hover:bg-surface-container shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all">
+                            Change Page
+                        </button>
+<button class="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-surface text-on-surface font-label-bold text-label-sm text-center hover:bg-surface-container shadow-[2px_2px_0px_0px_rgba(19,27,46,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all">
+                            Set Thumb
+                        </button>
+</div>
+</article>
+<!-- Volume Card 3 (Uploading State) -->
+<article class="bg-surface-variant border-2 border-dashed border-on-surface rounded-xl p-card-padding flex flex-col justify-center items-center gap-4 relative min-h-[350px]">
+<div class="w-12 h-12 rounded-full border-4 border-surface-container-highest border-t-primary animate-spin mb-2"></div>
+<div class="text-center w-full">
+<h4 class="font-label-bold text-label-bold text-on-surface truncate">appendix-materials-final.pdf</h4>
+<p class="font-label-sm text-label-sm text-primary mt-1">Uploading... 64%</p>
+<div class="w-full h-2 bg-surface-container-highest rounded-full mt-3 overflow-hidden border border-outline-variant">
+<div class="h-full bg-primary w-[64%]"></div>
+</div>
+</div>
+</article>
+</div>
+</div>
+<!-- Footer Actions -->
+<footer class="mt-section-gap pt-6 border-t-2 border-on-surface flex justify-between items-center bg-background sticky bottom-0 z-10 pb-6">
+<p class="font-label-bold text-label-bold text-on-surface-variant">
+                Total size: 26.5 MB / Unlimited
+            </p>
+<div class="flex gap-4">
+<button class="py-3 px-6 rounded-xl border-2 border-on-surface bg-surface text-on-surface font-label-bold text-label-bold hover:bg-surface-container transition-colors">
+                    Save Draft
+                </button>
+<button class="py-3 px-8 rounded-xl border-2 border-on-surface bg-primary text-on-primary font-headline-sm text-headline-sm shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:bg-primary-fixed hover:text-on-primary-fixed hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-2">
+                    Finish Uploading Series
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+</div>
+</footer>
+</main>
+</body></html>

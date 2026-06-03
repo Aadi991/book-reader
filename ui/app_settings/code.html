@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bibliophile Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e4e0f5",
+                        "surface-tint": "#44655b",
+                        "surface": "#faf8ff",
+                        "surface-container": "#eaedff",
+                        "on-surface-variant": "#414845",
+                        "on-surface": "#131b2e",
+                        "on-primary-fixed": "#002019",
+                        "surface-bright": "#faf8ff",
+                        "on-secondary-container": "#666353",
+                        "on-tertiary-fixed-variant": "#464555",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "primary-fixed-dim": "#abcec2",
+                        "on-tertiary-fixed": "#1b1a29",
+                        "surface-variant": "#dae2fd",
+                        "primary": "#44655b",
+                        "background": "#faf8ff",
+                        "surface-dim": "#d2d9f4",
+                        "inverse-primary": "#abcec2",
+                        "outline-variant": "#c1c8c4",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "outline": "#717975",
+                        "on-background": "#131b2e",
+                        "tertiary-container": "#efebff",
+                        "secondary-fixed": "#e8e2cf",
+                        "on-tertiary-container": "#6b697b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1e1c10",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e2e7ff",
+                        "tertiary": "#5e5c6e",
+                        "primary-container": "#d1f5e8",
+                        "on-primary-container": "#517167",
+                        "on-primary": "#ffffff",
+                        "secondary": "#625f4f",
+                        "surface-container-highest": "#dae2fd",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#e5e0cc",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "inverse-surface": "#283044",
+                        "on-primary-fixed-variant": "#2d4d44",
+                        "inverse-on-surface": "#eef0ff",
+                        "tertiary-fixed-dim": "#c8c4d8",
+                        "primary-fixed": "#c6eadd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "unit": "4px",
+                        "gutter-md": "16px",
+                        "section-gap": "32px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "body-reading": [
+                            "Literata"
+                        ],
+                        "label-bold": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "body-ui": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "headline-sm": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "label-sm": [
+                            "Plus Jakarta Sans"
+                        ],
+                        "headline-md": [
+                            "Plus Jakarta Sans"
+                        ]
+                    },
+                    "fontSize": {
+                        "display-lg": [
+                            "32px",
+                            {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                            }
+                        ],
+                        "body-reading": [
+                            "18px",
+                            {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "label-bold": [
+                            "14px",
+                            {
+                                "lineHeight": "20px",
+                                "fontWeight": "700"
+                            }
+                        ],
+                        "body-ui": [
+                            "16px",
+                            {
+                                "lineHeight": "24px",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "headline-sm": [
+                            "20px",
+                            {
+                                "lineHeight": "28px",
+                                "fontWeight": "700"
+                            }
+                        ],
+                        "label-sm": [
+                            "12px",
+                            {
+                                "lineHeight": "16px",
+                                "fontWeight": "600"
+                            }
+                        ],
+                        "headline-md": [
+                            "24px",
+                            {
+                                "lineHeight": "32px",
+                                "fontWeight": "700"
+                            }
+                        ]
+                    }
+                }
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        /* Custom toggle styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: theme('colors.primary');
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: theme('colors.primary');
+        }
+        .toggle-checkbox:checked + .toggle-label:before {
+            transform: translateX(100%);
+            border-color: white;
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: theme('colors.primary');
+            cursor: pointer;
+            border: 2px solid theme('colors.on-surface');
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-section-gap sticky top-0 z-50 ml-64 w-[calc(100%-16rem)] h-20 w-full border-b-2 border-on-surface bg-surface text-primary font-label-bold text-label-bold hidden md:flex">
+<div class="flex items-center gap-4">
+<div class="font-display-lg text-display-lg font-black text-on-surface">Bibliophile</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full border-2 border-transparent hover:border-on-surface hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full border-2 border-transparent hover:border-on-surface hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full border-2 border-transparent hover:border-on-surface hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+</button>
+<button class="bg-primary-container text-on-primary-container border-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all px-4 py-2 rounded-xl flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Add Book
+            </button>
+<div class="w-10 h-10 rounded-full border-2 border-on-surface overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up portrait of a young woman with a neutral expression, serving as a user avatar placeholder. The lighting is soft and studio-quality, emphasizing a modern, clean aesthetic typical of high-end digital lifestyle apps. The colors are muted but warm, fitting seamlessly into a cream and charcoal design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzqDQNBGYSotw0kAJkQv9C2Be5i3NcI-oG62ozXlkeigDkh49Bw6c-eA9U2aEeZr5RH3ftCeQTNVLe3gAs5zVDNOWZNoEVVuCUmch55fN6TnxuvkxsZ8hdklmxc7VqHs5V0tqu_zlKkN7U7NHpuInMzcTr490En3tV_WBcMltePkh02uFJcmbdKuWwdCUkGrBP0RKdu6eGnJY0A3Pw2oXlzHwQiZCqBB58oD9kdLb-34rdQLntoKIvhoa7SqHJ9Jz157YzsSZJQHj_"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col p-margin-mobile bg-background text-primary font-body-ui text-body-ui h-screen w-64 border-r-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hidden md:flex z-40">
+<div class="mb-section-gap pt-4">
+<div class="font-display-lg text-display-lg text-on-surface mb-2">Bibliophile</div>
+<div class="text-on-surface-variant text-label-sm font-label-sm uppercase tracking-wider">Personal Reader</div>
+</div>
+<ul class="flex flex-col gap-2 flex-1">
+<li>
+<a class="text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-all flex items-center gap-4 px-4 py-3 rounded-xl border-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+                        Library
+                    </a>
+</li>
+<li>
+<a class="text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-all flex items-center gap-4 px-4 py-3 rounded-xl border-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+                        Continue Reading
+                    </a>
+</li>
+<li>
+<a class="text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-all flex items-center gap-4 px-4 py-3 rounded-xl border-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        Downloads
+                    </a>
+</li>
+<li>
+<a class="text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-all flex items-center gap-4 px-4 py-3 rounded-xl border-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+                        Bookmarks
+                    </a>
+</li>
+<li>
+<a class="text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-all flex items-center gap-4 px-4 py-3 rounded-xl border-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="sticky_note_2">sticky_note_2</span>
+                        Notes
+                    </a>
+</li>
+<li>
+<a class="bg-primary-container text-on-primary-container border-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] -translate-y-0.5 flex items-center gap-4 px-4 py-3 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings" data-weight="fill">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+<div class="mt-auto pt-section-gap">
+<button class="w-full bg-surface text-on-surface border-2 border-on-surface shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none transition-all px-4 py-3 rounded-xl font-label-bold text-label-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="create_new_folder">create_new_folder</span>
+                    New Collection
+                </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-margin-mobile md:p-section-gap max-w-4xl mx-auto w-full pt-24 md:pt-section-gap">
+<div class="mb-section-gap">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2">Settings</h1>
+<p class="font-body-ui text-body-ui text-on-surface-variant">Manage your reading experience and account preferences.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-md">
+<!-- Settings Navigation (In-page) -->
+<div class="md:col-span-1 space-y-2">
+<button class="w-full text-left px-4 py-3 rounded-xl bg-primary-container text-on-primary-container border-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] -translate-y-0.5 font-label-bold text-label-bold flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="palette" data-weight="fill">palette</span>
+                         Appearance
+                     </button>
+<button class="w-full text-left px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low border-2 border-transparent font-label-bold text-label-bold flex items-center gap-3 transition-colors">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+                         Reading
+                     </button>
+<button class="w-full text-left px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low border-2 border-transparent font-label-bold text-label-bold flex items-center gap-3 transition-colors">
+<span class="material-symbols-outlined" data-icon="sd_storage">sd_storage</span>
+                         Storage
+                     </button>
+<button class="w-full text-left px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low border-2 border-transparent font-label-bold text-label-bold flex items-center gap-3 transition-colors">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                         Account
+                     </button>
+</div>
+<!-- Settings Content Area -->
+<div class="md:col-span-3 space-y-section-gap">
+<!-- Section: Appearance -->
+<section class="bg-surface rounded-2xl border-2 border-on-surface p-card-padding shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2 border-b-2 border-on-surface pb-4">
+<span class="material-symbols-outlined text-primary" data-icon="palette">palette</span>
+                            Appearance
+                        </h2>
+<div class="space-y-6">
+<!-- Dark Mode Toggle -->
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-label-bold text-label-bold text-on-surface">Dark Mode</h3>
+<p class="font-body-ui text-body-ui text-on-surface-variant text-sm mt-1">Switch between light and dark themes.</p>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-2 border-on-surface appearance-none cursor-pointer z-10 top-0 left-0 transition-transform duration-200 ease-in-out" id="darkModeToggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-container-highest cursor-pointer border-2 border-on-surface" for="darkModeToggle"></label>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+</body></html>

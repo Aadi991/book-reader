@@ -1,0 +1,222 @@
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: 'Plus Jakarta Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Plus Jakarta Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+  --primary: #44655b;
+  --primary-container: #d1f5e8;
+  --card: #ffffff;
+  --muted: var(--text);
+  --on-surface: #131b2e;
+  --secondary-container: #e5e0cc;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@import "tailwindcss";
+
+@theme {
+  --font-plus: "Plus Jakarta Sans", ui-sans-serif, system-ui;
+  --font-reading: "Literata", serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  body {
+    margin: 0;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-h);
+  }
+
+  .font-reading {
+    font-family: 'Literata', serif;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    --primary: #6fbf9a;
+    --primary-container: rgba(111,191,154,0.12);
+    --card: #161619;
+    --muted: #9ca3af;
+    --on-surface: #f3f4f6;
+    --secondary-container: #2e2a22;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+/* Design system base styles */
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: #faf8ff;
+  color: #131b2e;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color: #131b2e;
+}
+
+.br-btn {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  background: #d1f5e8;
+  color: #517167;
+  border: 2px solid #131b2e;
+  font-weight: 700;
+}
+
+.book-title {
+  font-family: 'Literata', Georgia, serif;
+  font-weight: 700;
+  color: #131b2e;
+}
+
+
+body {
+  margin: 0;
+}
+
+#root {
+  /* Use fluid layout with viewport-relative side padding for desktop-first design */
+  width: 100%;
+  max-width: 100%;
+  padding-inline: 2rem;
+  margin: 0 auto;
+  text-align: left;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Design tokens used by the UI HTML */
+:root {
+  --section-gap: 32px;
+  --gutter-md: 1.5rem;
+}
+
+/* Utility classes used in the converted UI */
+.p-section-gap { padding: var(--section-gap); }
+.px-section-gap { padding-left: var(--section-gap); padding-right: var(--section-gap); }
+.p-gutter-md { padding: var(--gutter-md); }
+.gap-section-gap { gap: var(--section-gap); }
+.gap-gutter-md { gap: var(--gutter-md); }
+
+/* Additional design utilities used by converted UI */
+:root {
+  --card-padding: 24px;
+}
+
+.p-card-padding { padding: var(--card-padding); }
+.mb-section-gap { margin-bottom: var(--section-gap); }
+.p-margin-mobile { padding: 20px; }
+.space-y-section-gap > * + * { margin-top: var(--section-gap); }
+
+/* Basic slider thumb style used in settings */
+.slider-thumb::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 9999px; background: #44655b; border: 2px solid #fff; }
+.slider-thumb { appearance: none; height: 6px; background: #e6e6e6; border-radius: 9999px; }
+
+/* Neo-Brutalist utilities used by settings/account pages */
+.brutal-border { border: 2px solid var(--on-surface, #131b2e); }
+.brutal-shadow { box-shadow: 4px 4px 0px 0px var(--on-surface, #131b2e); transition: all 0.2s ease; }
+.brutal-shadow:active { box-shadow: 2px 2px 0px 0px var(--on-surface, #131b2e); transform: translate(2px,2px); }
+.brutal-input { border: 2px solid var(--on-surface, #131b2e); background-color: var(--secondary-container, #e5e0cc); transition: all 0.2s ease; }
+.brutal-input:focus { outline: none; border-color: var(--primary, #44655b); box-shadow: 4px 4px 0px 0px var(--primary-fixed-dim, #abcec2); transform: translate(-2px,-2px); }
+
+/* Toggle styles matching design */
+.toggle-checkbox:checked { right: 0; border-color: var(--primary, #44655b); }
+.toggle-checkbox:checked + .toggle-label { background-color: var(--primary-container, #d1f5e8); border-color: var(--primary, #44655b); }
+.toggle-label { display:block; }
+
+/* Danger zone active state when right column is scrolled */
+.danger-active { background-color: rgba(186,26,26,0.06); border-color: rgba(186,26,26,0.18); }
+
+/* Typography utility mappings from the design HTML */
+.font-body-ui,
+.font-label-sm,
+.font-label-bold,
+.font-headline-md,
+.font-headline-sm,
+.font-display-lg { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+
+.font-body-reading,
+.font-body-reading { font-family: 'Literata', Georgia, serif; }
+
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+/* Remove global fixed sizes so Tailwind utility classes control heading sizes */
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}

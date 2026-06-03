@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Library Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e4e0f5",
+                        "surface-tint": "#44655b",
+                        "surface": "#faf8ff",
+                        "surface-container": "#eaedff",
+                        "on-surface-variant": "#414845",
+                        "on-surface": "#131b2e",
+                        "on-primary-fixed": "#002019",
+                        "surface-bright": "#faf8ff",
+                        "on-secondary-container": "#666353",
+                        "on-tertiary-fixed-variant": "#464555",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "primary-fixed-dim": "#abcec2",
+                        "on-tertiary-fixed": "#1b1a29",
+                        "surface-variant": "#dae2fd",
+                        "primary": "#44655b",
+                        "background": "#faf8ff",
+                        "surface-dim": "#d2d9f4",
+                        "inverse-primary": "#abcec2",
+                        "outline-variant": "#c1c8c4",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "outline": "#717975",
+                        "on-background": "#131b2e",
+                        "tertiary-container": "#efebff",
+                        "secondary-fixed": "#e8e2cf",
+                        "on-tertiary-container": "#6b697b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1e1c10",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e2e7ff",
+                        "tertiary": "#5e5c6e",
+                        "primary-container": "#d1f5e8",
+                        "on-primary-container": "#517167",
+                        "on-primary": "#ffffff",
+                        "secondary": "#625f4f",
+                        "surface-container-highest": "#dae2fd",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#e5e0cc",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "inverse-surface": "#283044",
+                        "on-primary-fixed-variant": "#2d4d44",
+                        "inverse-on-surface": "#eef0ff",
+                        "tertiary-fixed-dim": "#c8c4d8",
+                        "primary-fixed": "#c6eadd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "unit": "4px",
+                        "gutter-md": "16px",
+                        "section-gap": "32px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "body-reading": ["Literata"],
+                        "label-bold": ["Plus Jakarta Sans"],
+                        "body-ui": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-reading": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "body-ui": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.background');
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-dim');
+            border-radius: theme('borderRadius.full');
+            border: 2px solid theme('colors.background');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline');
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-ui text-body-ui antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Shared Component) -->
+<aside class="bg-background fixed left-0 top-0 h-full w-64 border-r-2 border-on-surface flex flex-col p-margin-mobile z-40">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-12 h-12 rounded-full border-2 border-on-surface overflow-hidden shrink-0 bg-surface-variant flex items-center justify-center">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A portrait of a young individual with soft lighting, acting as a user profile avatar. The image style is clean and modern, fitting seamlessly into a high-contrast Neo-Brutalist UI with a pastel palette. The mood is calm and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoZMpXW4dsBAK_tdzNHXEGKW1RTjUk19POs4W2kc8jwrO_GBtyO-2NMVU46C43dmAOmK9rryOnWUo_oAcmvpAFe6vEG3bxp3dz2GtHvz-In03878r3SVFHlgrohPPHFtbKS1oRKtfvNuwDVLddAMa7N1oBgISeOCeP6YQcF9BbmQGAiLLRRqVk52OFMzDlm-xxlKyQzANOQFrbHQqXbmEaney9h5RFJvCj9jIv0F5V7uosZ4NZPsK6H4fRNywf3xC9oP2Gpokq6XTP"/>
+</div>
+<div>
+<h1 class="font-display-lg text-[20px] leading-[24px] font-black text-on-surface tracking-tight">Bibliophile</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Personal Reader</p>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Active Tab: Library -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-container text-on-primary-container border-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] -translate-y-0.5 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">library_books</span>
+<span class="font-label-bold text-label-bold">Library</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="font-label-bold text-label-bold">Continue Reading</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">download</span>
+<span class="font-label-bold text-label-bold">Downloads</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+<span class="font-label-bold text-label-bold">Bookmarks</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">sticky_note_2</span>
+<span class="font-label-bold text-label-bold">Notes</span>
+</a>
+</nav>
+<!-- Settings (Bottom anchored) -->
+<div class="mt-auto flex flex-col gap-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:bg-primary-container hover:text-on-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-bold text-label-bold">Settings</span>
+</a>
+<!-- CTA -->
+<button class="w-full bg-surface border-2 border-on-surface py-3 rounded-xl font-label-bold text-label-bold text-on-surface hover:bg-primary-container hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all duration-100 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                New Collection
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface flex justify-between items-center w-full px-section-gap sticky top-0 z-30 h-20 border-b-2 border-on-surface">
+<!-- Search Bar -->
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border-2 border-on-surface rounded-full py-2.5 pl-12 pr-4 font-body-ui text-body-ui text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-0 transition-colors shadow-sm" placeholder="Search library, authors, tags..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button aria-label="notifications" class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="cloud_upload" class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">cloud_upload</span>
+</button>
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-6 py-2.5 rounded-full border-2 border-on-surface hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    Add Book
+                </button>
+</div>
+</header>
+<!-- Main Dashboard Content -->
+<main class="flex-1 p-section-gap flex flex-col gap-section-gap overflow-x-hidden">
+<!-- Recently Opened (Bento Style Layout) -->
+<section class="flex flex-col gap-6">
+<div class="flex items-end justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recently Opened</h2>
+<a class="font-label-bold text-label-bold text-primary hover:underline underline-offset-4" href="#">View History</a>
+</div>
+<!-- Bento Grid for Recent -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-md">
+<!-- Featured Recent Book (Spans 2 columns) -->
+<div class="col-span-1 md:col-span-2 bg-surface border-2 border-on-surface rounded-[24px] p-6 flex flex-col sm:flex-row gap-8 items-center sm:items-stretch group hover:shadow-[6px_6px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all cursor-pointer">
+<div class="w-32 sm:w-48 shrink-0 aspect-[2/3] rounded-lg border-2 border-on-surface overflow-hidden shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A macro shot of an elegant, vintage-style book cover featuring abstract geometric patterns in deep mint and cream. The texture of the paper is visible, highlighting a premium, tactile quality suitable for a high-end digital reading app. Lighting is soft and directional, creating a sophisticated mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQWrynTJ_rmqs8CDFcGTf52DAa_fCtwCE3zRdiZFmvTApe_CMa0XOE5aapXDUScV5X1e4TeddR49dwTOW0vlhCqnFMygWh1yfp1hoYZYaju_ZmZWcsm1_wjqYYK5zSwcwA0gSqms2rpGfRmM4xyGU2bnkbn4sTMnVpwkgVdSsOmHUpETDnt9iHMxE0gLwQqa0r-KlW9PVgO_pjrGPD1jactGXuzkk7wt7tsqirk-ca6BeJyGpOeqGb9BItk7xCg1sZ2QQyP8q44jDE"/>
+</div>
+<div class="flex flex-col justify-center flex-1 w-full text-center sm:text-left">
+<span class="inline-block px-3 py-1 bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm rounded-full border border-on-surface w-fit mb-4 mx-auto sm:mx-0">Reading Now</span>
+<h3 class="font-body-reading text-[28px] leading-[36px] font-bold text-on-surface mb-2">The Architecture of Happiness</h3>
+<p class="font-body-ui text-body-ui text-on-surface-variant mb-6">Alain de Botton</p>
+<div class="mt-auto space-y-2">
+<div class="flex justify-between font-label-bold text-label-bold text-on-surface text-sm">
+<span>Chapter 4: Ideals</span>
+<span>64%</span>
+</div>
+<div class="w-full h-3 bg-surface-container-high rounded-full border-2 border-on-surface overflow-hidden">
+<div class="h-full bg-primary" style="width: 64%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Recent Stats/Book -->
+<div class="col-span-1 bg-surface-container-low border-2 border-on-surface rounded-[24px] p-6 flex flex-col justify-between group hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all cursor-pointer relative overflow-hidden">
+<!-- Decorative element -->
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-primary-fixed rounded-full opacity-50 blur-2xl"></div>
+<div>
+<div class="w-12 h-12 bg-primary text-on-primary rounded-xl border-2 border-on-surface flex items-center justify-center mb-6 shadow-[2px_2px_0px_0px_rgba(19,27,46,1)]">
+<span class="material-symbols-outlined">insights</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Reading Stats</h3>
+<p class="font-body-ui text-body-ui text-on-surface-variant">You're on a 12-day streak!</p>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-8">
+<div class="bg-surface border-2 border-on-surface rounded-xl p-3 text-center">
+<span class="block font-display-lg text-[24px] leading-none text-on-surface mb-1">14</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Hours read</span>
+</div>
+<div class="bg-surface border-2 border-on-surface rounded-xl p-3 text-center">
+<span class="block font-display-lg text-[24px] leading-none text-on-surface mb-1">3</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Books finished</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Your Collection (Grid Layout) -->
+<section class="flex flex-col gap-6 mt-4">
+<div class="flex items-end justify-between border-b-2 border-on-surface pb-4">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Your Collection</h2>
+<span class="px-2 py-1 bg-surface border-2 border-on-surface rounded-md font-label-sm text-label-sm text-on-surface-variant">124 Books</span>
+</div>
+<!-- Filters/Sort -->
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 bg-surface rounded-full border-2 border-on-surface font-label-bold text-label-bold flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">sort</span>
+                            Recent
+                        </button>
+<button class="px-4 py-2 bg-surface rounded-full border-2 border-on-surface font-label-bold text-label-bold flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Filter
+                        </button>
+</div>
+</div>
+<!-- 5-Column Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-gutter-md">
+<!-- Book Card 1 -->
+<article class="group relative flex flex-col bg-surface rounded-xl border-2 border-on-surface overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+<div class="relative aspect-[2/3] w-full bg-surface-container-high border-b-2 border-on-surface overflow-hidden">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A minimalist book cover design featuring a stark, monochromatic architectural sketch against a pristine white background. The aesthetic is clean, intellectual, and slightly brutalist, fitting perfectly within a light-mode digital library environment. High contrast lines and soft ambient lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArHW218F8WJpdCaIB8PpyB8TPcoUSEvuUJI2FUiBbOIQiuCjclLNAdHYIf_ORMzjqZq5dKJxgLBJGW_lQ8A2ca52KJZeZo8O9DzzYBI7dB9f1cYkdGOyfNn1nxKjRsIQRzDyKNNL5ISTjlHvtMdz9pzO2ufnO90G8K9JOkIDLVQaHtL-ouNaZRlo50Mu6twIQ-3v0c7pssdeLgPsuuIkNAfwDTxiudvPSeg0PpZ7BQELepAThsGUNliTJf-1sEftbJ8-evILOFmuDB"/>
+<!-- Overlay actions on hover -->
+<div class="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-sm">
+<button class="w-10 h-10 bg-surface rounded-full border-2 border-on-surface flex items-center justify-center text-on-surface hover:text-primary hover:scale-110 transition-transform"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span></button>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-1 bg-surface">
+<h4 class="font-body-reading font-semibold text-on-surface text-[16px] leading-snug line-clamp-2 mb-1">Thinking, Fast and Slow</h4>
+<p class="font-body-ui text-sm text-on-surface-variant line-clamp-1 mb-3">Daniel Kahneman</p>
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Progress</span>
+<span class="font-label-bold text-label-sm text-on-surface">32%</span>
+</div>
+</div>
+</div>
+<!-- Progress Bar at bottom border -->
+<div class="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300" style="width: 32%;"></div>
+</article>
+<!-- Book Card 2 -->
+<article class="group relative flex flex-col bg-surface rounded-xl border-2 border-on-surface overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+<div class="relative aspect-[2/3] w-full bg-surface-container-high border-b-2 border-on-surface overflow-hidden">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A stylized, modern book cover with abstract, flowing shapes in pastel cream and subtle green tones. The design suggests themes of nature and philosophy. It is well-lit, emphasizing a premium, tactile card-like appearance against a brutalist UI frame." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpUjZ6I31T3MWuW8B0MiBu3yuxxvlY7ObWa52flj2ziIPFyeoZU12DRcSRD1RPVHbAc-T-QwD4MIpikPlP38rtXsWx8525Oazf6cCEX9NlNC-DEv4SKx6ugG3bncwK_sXn2mFxJYkY6B7fKEO8441Vczc0tj-fDl3w7RuynZyxn7nZRW0-naITSfaTYqtt20PnWc5cozA56wVlKP25wihl97EQjbS_rF9fJ0f7OwV8i7K262AX4ticXclv5H17PC32evMRxig-JACa"/>
+<div class="absolute top-2 right-2 bg-surface border-2 border-on-surface rounded-full w-8 h-8 flex items-center justify-center z-10 shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-1 bg-surface">
+<h4 class="font-body-reading font-semibold text-on-surface text-[16px] leading-snug line-clamp-2 mb-1">Meditations</h4>
+<p class="font-body-ui text-sm text-on-surface-variant line-clamp-1 mb-3">Marcus Aurelius</p>
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Status</span>
+<span class="font-label-bold text-label-sm text-primary">Finished</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300" style="width: 100%;"></div>
+</article>
+<!-- Book Card 3 -->
+<article class="group relative flex flex-col bg-surface rounded-xl border-2 border-on-surface overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+<div class="relative aspect-[2/3] w-full bg-surface-container-high border-b-2 border-on-surface overflow-hidden flex items-center justify-center">
+<!-- Placeholder for missing cover -->
+<div class="text-center p-4">
+<span class="material-symbols-outlined text-4xl text-outline-variant mb-2">menu_book</span>
+<p class="font-label-bold text-sm text-on-surface-variant">Cover Preview</p>
+</div>
+</div>
+<div class="p-4 flex flex-col flex-1 bg-surface">
+<h4 class="font-body-reading font-semibold text-on-surface text-[16px] leading-snug line-clamp-2 mb-1">Design of Everyday Things</h4>
+<p class="font-body-ui text-sm text-on-surface-variant line-clamp-1 mb-3">Don Norman</p>
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Progress</span>
+<span class="font-label-bold text-label-sm text-on-surface">12%</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300" style="width: 12%;"></div>
+</article>
+<!-- Book Card 4 -->
+<article class="group relative flex flex-col bg-surface rounded-xl border-2 border-on-surface overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+<div class="relative aspect-[2/3] w-full bg-surface-container-high border-b-2 border-on-surface overflow-hidden">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A bold, typography-driven book cover in light mode. Large, stark black serif fonts span across a solid pastel cream background. The design is highly structured, echoing Neo-Brutalist graphic design principles, with sharp edges and clear visual hierarchy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIcj3l-DzFjGlHqC4IOUSwKLouvD9jRptEG9Er-4GUzh1npWDKluf9TQR4y3gD0YHeC5tOuZs1zJRYjzNa5stDR0FGsWRi_ARmirGgJB8cYRHoSYt3krWvNoAtjwxN7Tt57E2D6Pjga4MBHNKVieuYvWrB7X5DejxFRTrQEBzInmo9NJdoF3Rz8kMY3CufVW5uHfIcPiC9Psv_rhtnabz-1c7rDOKDPhmbMtvuWM2ugg9eI9FM9p7PdMuxUgObnFJ82_kJ6IHaHbxw"/>
+</div>
+<div class="p-4 flex flex-col flex-1 bg-surface">
+<h4 class="font-body-reading font-semibold text-on-surface text-[16px] leading-snug line-clamp-2 mb-1">Typography Handbook</h4>
+<p class="font-body-ui text-sm text-on-surface-variant line-clamp-1 mb-3">Ellen Lupton</p>
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Progress</span>
+<span class="font-label-bold text-label-sm text-on-surface">89%</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300" style="width: 89%;"></div>
+</article>
+<!-- Book Card 5 -->
+<article class="group relative flex flex-col bg-surface rounded-xl border-2 border-on-surface overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+<div class="relative aspect-[2/3] w-full bg-surface-container-high border-b-2 border-on-surface overflow-hidden">
+<img alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An artistic digital book cover showing a surreal, soft-focus landscape with pastel pink and mint skies. The scene is calm, evoking a sense of literary discovery. Framed tightly within a 2px black border, it sits perfectly within a tactile UI component." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1AP4wymJfXC7RyfWKbnE94FvvG9MXWvPGanRzBvNViPGZW5aPZEow8KH8Q5o0E0F1LDe5e1nmOhNvHvK5j18B0DhSjp_SeG0pULrdp-rGzgsVzRt6QS0d4parqQNBGiudnnQvztRHTukNCX6KS-q3nNBruBFo4cnRYjC1YEjPLE8k0WM_aQBHACpvpslhXkSEr7-I0YdQVZtGYncQN90pfEQtrk7ZkqUPoEA4SCrJz3jtjA3ADBvPAskQZ370LZEXQe-eqj0vjFcC"/>
+<div class="absolute top-2 left-2 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-md border border-on-surface font-label-sm text-[10px] uppercase tracking-wide">
+                                New
+                            </div>
+</div>
+<div class="p-4 flex flex-col flex-1 bg-surface">
+<h4 class="font-body-reading font-semibold text-on-surface text-[16px] leading-snug line-clamp-2 mb-1">Invisible Cities</h4>
+<p class="font-body-ui text-sm text-on-surface-variant line-clamp-1 mb-3">Italo Calvino</p>
+<div class="mt-auto">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Progress</span>
+<span class="font-label-bold text-label-sm text-on-surface">0%</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-surface-variant transition-all duration-300" style="width: 100%;"></div>
+</article>
+</div>
+</section>
+<!-- Bottom padding for scrolling -->
+<div class="h-12 w-full"></div>
+</main>
+</div>
+</body></html>
