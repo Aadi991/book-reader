@@ -32,3 +32,4 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, strong linting and formatting are recommended. This repo is intentionally JavaScript-only; no TypeScript is configured.
 # book-reader
+# book-reader
