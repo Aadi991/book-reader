@@ -34,13 +34,13 @@ function App() {
     switch (route) {
       case '/continue': return <ContinuePage />
       case '/downloads': return <DownloadsPage />
-      case '/upload': return <BookUpload user={user} />
+      case '/upload': return <BookUpload/>
       case '/upload/series': return <UploadSeries />
       case '/upload/select': return <UploadSelect />
       case '/settings': return <SettingsPage />
       case '/library':
       default:
-        return <LibraryPage user={user} />
+        return <LibraryPage userId={user.uid} />
     }
   }
 

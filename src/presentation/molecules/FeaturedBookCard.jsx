@@ -1,5 +1,25 @@
 export default function FeaturedBookCard({ book }) {
-  if (!book) return null
+  if (!book) {
+    return null
+  }
+
+  const title =
+    book.title ||
+    book.name ||
+    'Untitled'
+
+  const author =
+    book.author ||
+    book.creator ||
+    ''
+
+  const cover =
+    book.coverUrl ||
+    book.coverPath ||
+    null
+
+  const progress =
+    Number(book.progress || 0)
 
   return (
     <div
@@ -23,15 +43,32 @@ export default function FeaturedBookCard({ book }) {
           border-2 border-on-surface
         "
       >
-        {book.coverUrl || book.coverPath ? (
+        {cover ? (
           <img
-            src={book.coverUrl || book.coverPath}
-            alt={book.title}
-            className="w-full h-full object-cover"
+            src={cover}
+            alt={title}
+            className="
+              w-full
+              h-full
+              object-cover
+            "
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="material-symbols-outlined text-6xl">
+          <div
+            className="
+              w-full
+              h-full
+              flex
+              items-center
+              justify-center
+            "
+          >
+            <span
+              className="
+                material-symbols-outlined
+                text-6xl
+              "
+            >
               menu_book
             </span>
           </div>
@@ -39,8 +76,14 @@ export default function FeaturedBookCard({ book }) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 h-full">
-
+      <div
+        className="
+          flex
+          flex-col
+          flex-1
+          h-full
+        "
+      >
         <div>
           <div
             className="
@@ -64,29 +107,34 @@ export default function FeaturedBookCard({ book }) {
               font-body-reading
             "
           >
-            {book.title}
+            {title}
           </h2>
 
-          <p
-            className="
-              mt-3
-              text-lg
-              text-on-surface-variant
-            "
-          >
-            {book.author}
-          </p>
+          {author && (
+            <p
+              className="
+                mt-3
+                text-lg
+                text-on-surface-variant
+              "
+            >
+              {author}
+            </p>
+          )}
         </div>
 
-        {/* Push progress to bottom */}
+        {/* Progress */}
         <div className="mt-auto">
           <div className="flex justify-between mb-2">
             <span className="font-semibold">
-              {book.currentChapter || 'Current Chapter'}
+              {book.currentChapter ||
+                (book.currentPage
+                  ? `Page ${book.currentPage}`
+                  : 'Current Position')}
             </span>
 
             <span className="font-semibold">
-              {book.progress || 0}%
+              {progress}%
             </span>
           </div>
 
@@ -102,7 +150,7 @@ export default function FeaturedBookCard({ book }) {
             <div
               className="h-full bg-primary"
               style={{
-                width: `${book.progress || 0}%`
+                width: `${progress}%`
               }}
             />
           </div>

@@ -5,31 +5,10 @@ class ProgressRepository {
     this.fs = fs
   }
 
-  // document id will be `${userId}_${bookId}`
   async getProgress(userId, bookId) {
     const id = `${userId}_${bookId}`
 
-    console.log(
-      '[ProgressRepository] getProgress',
-      {
-        id,
-        userId,
-        bookId
-      }
-    )
-
-    const result =
-      await this.fs.getDocByPath(
-        'progress',
-        id
-      )
-
-    console.log(
-      '[ProgressRepository] getProgress result',
-      result
-    )
-
-    return result
+    return await this.fs.getDocByPath('progress', id)
   }
 
   async setProgress(userId, bookId, data) {
@@ -41,32 +20,35 @@ class ProgressRepository {
       ...data
     }
 
-    console.log(
-      '[ProgressRepository] setProgress',
-      {
-        collection: 'progress',
-        id,
-        payload
-      }
-    )
-
-    const result =
-      await this.fs.set(
-        'progress',
-        id,
-        payload
-      )
-
-    console.log(
-      '[ProgressRepository] setProgress result',
-      result
-    )
-
-    return result
+    return await this.fs.set('progress', id, payload)
   }
 
+  /**
+   * FIXED: actually returns user history
+   */
   async listForUser(userId) {
-    return this.fs.query('progress', [])
+    const all = await this.fs.query('progress', [])
+
+    console.log('[all progress]', all)
+
+    const filtered = (all || [])
+      .filter(p => p.userId === userId)
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt) - new Date(a.updatedAt)
+      )
+
+    console.log('[filtered progress]', filtered)
+
+    return filtered
+  }
+
+  /**
+   * NEW: clean API for dashboard
+   */
+  async getRecentlyOpened(userId, limit = 1) {
+    const list = await this.listForUser(userId)
+    return list.slice(0, limit)
   }
 }
 

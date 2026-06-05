@@ -117,10 +117,40 @@ class SeriesRepository {
         collection(db, 'Series')
       )
 
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }))
+    return Promise.all(
+      snapshot.docs.map(async seriesDoc => {
+        const seriesId =
+          seriesDoc.id
+
+        const volumesSnap =
+          await getDocs(
+            collection(
+              db,
+              'Series',
+              seriesId,
+              'volumes'
+            )
+          )
+
+        const volumes =
+          volumesSnap.docs
+            .map(volumeDoc => ({
+              id: volumeDoc.id,
+              ...volumeDoc.data()
+            }))
+            .sort(
+              (a, b) =>
+                Number(a.volumeNo || 0) -
+                Number(b.volumeNo || 0)
+            )
+
+        return {
+          id: seriesId,
+          ...seriesDoc.data(),
+          volumes
+        }
+      })
+    )
   }
 }
 

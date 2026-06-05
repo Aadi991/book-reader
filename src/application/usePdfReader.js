@@ -1,19 +1,29 @@
-// /application/usePdfReader.js
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
+
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.js?url'
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker
 
 export function usePdfReader({ url, initialPage = 1, onPageChange }) {
   const [pdf, setPdf] = useState(null)
-  const [currentPage, setCurrentPage] = useState(initialPage)
   const [pageInput, setPageInput] = useState(String(initialPage))
+  const [pagesReady, setPagesReady] = useState(false)
 
   const containerRef = useRef(null)
   const pagesRef = useRef(null)
+
   const pageRefs = useRef([])
+  const observerRef = useRef(null)
+  const renderQueue = useRef(new Map())
 
   const isJumping = useRef(false)
-  const suppressScroll = useRef(false)
-  const lastReportedPage = useRef(1)
+
+  // ---------------- STABLE CONTROL FLAGS ----------------
+  const didInitialJump = useRef(false)
+  const lastReportedPage = useRef(initialPage)
+
+  const saveTimer = useRef(null)
+  const pendingSave = useRef(null)
 
   // ---------------- LOAD PDF ----------------
   useEffect(() => {
@@ -26,15 +36,18 @@ export function usePdfReader({ url, initialPage = 1, onPageChange }) {
       if (cancelled) return
 
       setPdf(doc)
-      setCurrentPage(initialPage)
       setPageInput(String(initialPage))
+
+      // reset per document
+      didInitialJump.current = false
+      lastReportedPage.current = initialPage
     }
 
     load()
     return () => (cancelled = true)
-  }, [url, initialPage])
+  }, [url])
 
-  // ---------------- CREATE ALL PAGES (IMPORTANT FIX) ----------------
+  // ---------------- BUILD PAGES ----------------
   useEffect(() => {
     if (!pdf || !pagesRef.current) return
 
@@ -45,137 +58,181 @@ export function usePdfReader({ url, initialPage = 1, onPageChange }) {
     for (let i = 1; i <= pdf.numPages; i++) {
       const wrapper = document.createElement('div')
       wrapper.dataset.page = String(i)
-      wrapper.className = 'bg-white shadow-lg mb-4'
+      wrapper.style.marginBottom = '16px'
 
       const canvas = document.createElement('canvas')
-      wrapper.appendChild(canvas)
 
+      wrapper.appendChild(canvas)
       container.appendChild(wrapper)
 
       pageRefs.current[i - 1] = {
         wrapper,
         canvas,
-        rendered: false
+        rendered: false,
+        rendering: false
       }
     }
+
+    setPagesReady(true)
   }, [pdf])
 
-  // ---------------- LAZY RENDER ----------------
+  // ---------------- INITIAL RESTORE (ONCE ONLY) ----------------
   useEffect(() => {
-    if (!pdf || !containerRef.current) return
+    if (!pagesReady) return
+    if (didInitialJump.current) return
 
-    const observer = new IntersectionObserver(
-      async (entries) => {
+    didInitialJump.current = true
+
+    requestAnimationFrame(() => {
+      jumpToPage(initialPage)
+    })
+  }, [pagesReady, initialPage])
+
+  // ---------------- RENDER PAGE ----------------
+  async function renderPage(pdf, pageNum) {
+    const ref = pageRefs.current[pageNum - 1]
+    if (!ref || ref.rendered || ref.rendering) return
+
+    ref.rendering = true
+
+    const page = await pdf.getPage(pageNum)
+    const viewport = page.getViewport({ scale: 1.35 })
+
+    const ctx = ref.canvas.getContext('2d')
+    ref.canvas.width = viewport.width
+    ref.canvas.height = viewport.height
+
+    await page.render({
+      canvasContext: ctx,
+      viewport
+    }).promise
+
+    ref.rendered = true
+    ref.rendering = false
+  }
+
+  // ---------------- INTERSECTION OBSERVER (RENDER ONLY) ----------------
+  useEffect(() => {
+    if (!pdf || !containerRef.current || !pagesReady) return
+
+    observerRef.current?.disconnect()
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue
 
           const pageNum = Number(entry.target.dataset.page)
-          const ref = pageRefs.current[pageNum - 1]
 
-          if (!ref || ref.rendered) continue
+          if (!renderQueue.current.has(pageNum)) {
+            renderQueue.current.set(pageNum, true)
 
-          const page = await pdf.getPage(pageNum)
-          const viewport = page.getViewport({ scale: 1.35 })
-
-          const ctx = ref.canvas.getContext('2d')
-
-          ref.canvas.width = viewport.width
-          ref.canvas.height = viewport.height
-
-          await page.render({
-            canvasContext: ctx,
-            viewport
-          }).promise
-
-          ref.rendered = true
+            requestAnimationFrame(async () => {
+              await renderPage(pdf, pageNum)
+              renderQueue.current.delete(pageNum)
+            })
+          }
         }
       },
       {
         root: containerRef.current,
-        rootMargin: '800px 0px',
+        rootMargin: '1000px 0px',
         threshold: 0.01
       }
     )
 
     pageRefs.current.forEach(p => {
-      if (p?.wrapper) observer.observe(p.wrapper)
+      if (p?.wrapper) observerRef.current.observe(p.wrapper)
     })
 
-    return () => observer.disconnect()
-  }, [pdf])
+    return () => observerRef.current?.disconnect()
+  }, [pdf, pagesReady])
 
-  // ---------------- SCROLL TRACKING ----------------
+  // ---------------- SCROLL TRACKING (UI ONLY, NO STATE AUTHORITY) ----------------
   useEffect(() => {
     const container = containerRef.current
-    if (!container) return
+    if (!container || !pagesReady) return
+
+    let ticking = false
 
     function onScroll() {
-      if (!pdf || isJumping.current || suppressScroll.current) return
+      if (!pdf || isJumping.current) return
 
-      const center = container.scrollTop + container.clientHeight / 2
+      if (ticking) return
+      ticking = true
 
-      let closest = 1
-      let best = Infinity
+      requestAnimationFrame(() => {
+        ticking = false
 
-      pageRefs.current.forEach((el, i) => {
-        if (!el?.wrapper) return
+        const center = container.scrollTop + container.clientHeight / 2
 
-        const top = el.wrapper.offsetTop
-        const height = el.wrapper.offsetHeight
-        const mid = top + height / 2
+        let closest = 1
+        let best = Infinity
 
-        const dist = Math.abs(center - mid)
+        pageRefs.current.forEach((el, i) => {
+          if (!el?.wrapper) return
 
-        if (dist < best) {
-          best = dist
-          closest = i + 1
+          const top = el.wrapper.offsetTop
+          const mid = top + el.wrapper.offsetHeight / 2
+
+          const dist = Math.abs(center - mid)
+
+          if (dist < best) {
+            best = dist
+            closest = i + 1
+          }
+        })
+
+        // UI only
+        setPageInput(String(closest))
+
+        // ---------------- SAFE SAVE (DEBOUNCED + NON-JUMPING) ----------------
+        if (closest !== lastReportedPage.current) {
+          lastReportedPage.current = closest
+
+          pendingSave.current = closest
+
+          clearTimeout(saveTimer.current)
+
+          saveTimer.current = setTimeout(() => {
+            onPageChange?.(pendingSave.current)
+          }, 1200)
         }
       })
-
-      if (closest !== lastReportedPage.current) {
-        lastReportedPage.current = closest
-        setCurrentPage(closest)
-        setPageInput(String(closest))
-        onPageChange?.(closest)
-      }
     }
 
     container.addEventListener('scroll', onScroll, { passive: true })
     return () => container.removeEventListener('scroll', onScroll)
-  }, [pdf, onPageChange])
+  }, [pdf, pagesReady, onPageChange])
 
-  // ---------------- GUARANTEED JUMP (FIXED) ----------------
-  function jumpToPage(page) {
-    if (!pdf) return
+  // ---------------- JUMP (ONLY CONTROLLED PROGRAMMATIC SCROLL) ----------------
+  const jumpToPage = useCallback((page) => {
+    if (!pdf || !pagesReady) return
     if (page < 1 || page > pdf.numPages) return
 
     const target = pageRefs.current[page - 1]
     if (!target?.wrapper) return
 
     isJumping.current = true
-    suppressScroll.current = true
 
     target.wrapper.scrollIntoView({
       behavior: 'auto',
       block: 'start'
     })
 
-    setCurrentPage(page)
     setPageInput(String(page))
+
+    lastReportedPage.current = page
 
     setTimeout(() => {
       isJumping.current = false
-      suppressScroll.current = false
     }, 250)
-
-    onPageChange?.(page)
-  }
+  }, [pdf, pagesReady])
 
   return {
     pdf,
     containerRef,
     pagesRef,
-    currentPage,
     pageInput,
     setPageInput,
     jumpToPage

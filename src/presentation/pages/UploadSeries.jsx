@@ -78,7 +78,7 @@ export default function UploadSeries() {
     files.length > 0 &&
     files.every(f => f.status === 'done') &&
     pendingQueue.length === 0 &&
-    !uploadQueue &&
+    typeof uploadQueue !== 'undefined' && uploadQueue !== null &&
     !processingRef.current &&
     !candidate
 
@@ -279,7 +279,15 @@ export default function UploadSeries() {
                   setDragActive(false)
                   setDraggedId(null)
                 }}
-                className={`bg-surface border-2 ${f.status === 'done' ? 'border-on-surface' : 'border-dashed border-on-surface'} rounded-xl p-card-padding ${viewMode === 'list' ? 'flex-row items-center' : 'flex flex-col'} gap-4 shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative group cursor-grab`}
+                className={`bg-surface border-2 ${
+                  f.status === 'done'
+                    ? 'border-on-surface'
+                    : 'border-dashed border-on-surface'
+                } rounded-xl p-6 ${
+                  viewMode === 'list'
+                    ? 'block'
+                    : 'flex flex-col'
+                } shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative group cursor-grab`}
               >
                 {dropIndicator?.id === f.id && dropIndicator.position === 'before' && (
                   <div className="absolute left-3 right-3 -top-2 h-1 rounded-full bg-[#44655b] z-30" />
@@ -295,15 +303,79 @@ export default function UploadSeries() {
                 </div>
 
                 {viewMode === 'list' ? (
-                  <div className="w-36 h-48 rounded-lg overflow-hidden border-2 border-on-surface bg-surface-container flex-shrink-0 flex items-center justify-center relative">
-                    {f.coverDataUrl ? (
-                      <img src={f.coverDataUrl} alt={`Volume ${index + 1} cover`} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="text-on-surface-variant font-plus">Generating preview...</div>
-                    )}
-                    <div className="absolute top-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">Vol. {index + 1}</div>
+                <div className="flex items-center gap-6">
+                  
+                  {/* Cover */}
+                  <div className="w-32 flex-shrink-0">
+                    <div className="aspect-[3/4] overflow-hidden rounded-lg border-2 border-on-surface">
+                      <img
+                        src={f.coverDataUrl}
+                        alt={f.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
-                ) : (
+
+                  {/* Metadata */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-bold text-xl">
+                        Volume {f.volumeNo}
+                      </h3>
+
+                      <span className="px-2 py-1 text-xs rounded bg-surface-container">
+                        {f.pageCount} pages
+                      </span>
+                    </div>
+
+                    <p className="mt-2 text-on-surface-variant truncate">
+                      {f.name}
+                    </p>
+
+                    <p className="mt-1 text-sm text-on-surface-variant">
+                      {fileSizeMB(f.size)}
+                    </p>
+
+                    <div className="mt-4">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>{f.status === 'done' ? 'Uploaded' : 'Uploading...'}</span>
+                        <span>{f.progress}%</span>
+                      </div>
+
+                      <div className="h-2 rounded-full bg-surface-container-highest overflow-hidden">
+                        <div
+                          className="h-full bg-primary"
+                          style={{ width: `${f.progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button
+                      onClick={() =>
+                        setCandidate({
+                          ...f,
+                          existingId: f.id,
+                          volumeNo: String(f.volumeNo)
+                        })
+                      }
+                      className="h-10 px-4 rounded-lg border-2 border-on-surface"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => removeFile(f.id)}
+                      className="h-10 px-4 rounded-lg border-2 border-red-500 text-red-500"
+                    >
+                      Delete
+                    </button>
+                  </div>
+
+                </div>
+              ) : (
                   <div className="w-full aspect-[3/4] bg-surface-container border-2 border-on-surface rounded-lg overflow-hidden relative flex items-center justify-center">
                     {f.coverDataUrl ? (
                       <img src={f.coverDataUrl} alt={`Volume ${index + 1} cover`} className="w-full h-full object-cover" />

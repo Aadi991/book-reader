@@ -1,188 +1,132 @@
-import { useEffect, useMemo, useState } from 'react'
+  import { useEffect, useMemo, useState } from 'react'
 
-import useSeries from '../../application/useSeries'
-import useBookUrl from '../../application/useBookUrl'
-import useReadingHistory from '../../application/useReadingHistory'
+  import useSeries from '../../application/useSeries'
+  import useBookUrl from '../../application/useBookUrl'
+  import useReadingHistory from '../../application/useReadingHistory'
 
-import VolumeSidebar from '../organisms/VolumeSidebar'
-import PdfReader from '../organisms/PdfReader'
-import CenterState from '../organisms/CentreState'
+  import VolumeSidebar from '../organisms/VolumeSidebar'
+  import PdfReader from '../organisms/PdfReader'
+  import CenterState from '../organisms/CentreState'
+  import {navigate} from '../navigate' 
 
-export default function SeriesPage({
-  seriesId,
-  userId
-}) {
-  const {
-    series,
-    loading: seriesLoading,
-    error
-  } = useSeries(seriesId)
+  export default function SeriesPage({
+    seriesId,
+    userId
+  }) {
+    const {
+      series,
+      loading: seriesLoading,
+      error
+    } = useSeries(seriesId)
 
-  const [sidebarOpen, setSidebarOpen] =
-    useState(true)
+    const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [selectedVolume, setSelectedVolume] = useState(null)
 
-  const [selectedVolume, setSelectedVolume] =
-    useState(null)
+    const {
+      progress,
+      loading: progressLoading,
+      saveReadingHistory
+    } = useReadingHistory({
+      userId,
+      bookId: seriesId
+    })
 
-  const {
-    progress,
-    loading: progressLoading,
-    saveReadingHistory
-  } = useReadingHistory({
-    userId,
-    bookId: seriesId
-  })
+    const { bookUrl } = useBookUrl(selectedVolume)
 
-  const { bookUrl } =
-    useBookUrl(selectedVolume)
+    // ---------------- SORT ----------------
+    const sortedVolumes = useMemo(() => {
+      return [...(series?.volumes || [])].sort(
+        (a, b) =>
+          Number(a.volumeNo || 0) - Number(b.volumeNo || 0)
+      )
+    }, [series])
 
-  const sortedVolumes = useMemo(() => {
-    return [...(series?.volumes || [])].sort(
-      (a, b) =>
-        Number(a.volumeNo || 0) -
-        Number(b.volumeNo || 0)
-    )
-  }, [series])
+    // ---------------- RESTORE VOLUME ----------------
+    useEffect(() => {
+      if (!series) return
+      if (selectedVolume) return
 
-  useEffect(() => {
-    console.log(
-      '[SeriesPage] progress changed',
-      progress
-    )
-  }, [progress])
-
-  useEffect(() => {
-    console.log(
-      '[SeriesPage] selectedVolume changed',
-      selectedVolume
-    )
-  }, [selectedVolume])
-
-  /**
-   * Restore last read volume
-   */
-  useEffect(() => {
-    if (!series) return
-    if (selectedVolume) return
-
-    if (progress?.volumeId) {
-      const savedVolume =
-        sortedVolumes.find(
+      if (progress?.volumeId) {
+        const saved = sortedVolumes.find(
           v => v.id === progress.volumeId
         )
 
-      if (savedVolume) {
-        console.log(
-          '[SeriesPage] Restoring volume',
-          savedVolume
-        )
-
-        setSelectedVolume(savedVolume)
-        return
+        if (saved) {
+          setSelectedVolume(saved)
+          return
+        }
       }
-    }
 
-    /**
-     * No reading history
-     * Select first volume
-     */
-    if (sortedVolumes.length > 0) {
-      console.log(
-        '[SeriesPage] Selecting first volume'
-      )
-
-      setSelectedVolume(
-        sortedVolumes[0]
-      )
-    }
-  }, [
-    series,
-    progress,
-    selectedVolume,
-    sortedVolumes
-  ])
-
-  function handlePageChange(page) {
-    console.log(
-      '[SeriesPage] handlePageChange',
-      {
-        page,
-        selectedVolume
+      if (sortedVolumes.length > 0) {
+        setSelectedVolume(sortedVolumes[0])
       }
-    )
+    }, [series, progress, selectedVolume, sortedVolumes])
 
-    if (!selectedVolume) {
-      console.warn(
-        '[SeriesPage] No selected volume'
-      )
+    useEffect(() => {
+      console.log('[SeriesPage] progress', progress)
+    }, [progress])
 
-      return
+    useEffect(() => {
+      console.log('[SeriesPage] selectedVolume', selectedVolume)
+    }, [selectedVolume])
+
+    function handlePageChange(page) {
+      if (!selectedVolume) return
+
+      saveReadingHistory({
+        volumeId: selectedVolume.id,
+        volumeNo: selectedVolume.volumeNo,
+        page
+      })
     }
 
-    saveReadingHistory({
-      volumeId: selectedVolume.id,
-      volumeNo:
-        selectedVolume.volumeNo,
-      page
-    })
-  }
+    // ---------------- ALL HOOKS ABOVE RETURNS (IMPORTANT FIX) ----------------
+    const initialPage = useMemo(() => {
+    if (!progress || !selectedVolume) return 1
 
-  if (
-    seriesLoading ||
-    progressLoading
-  ) {
+    if (progress?.volumeId === selectedVolume?.id) {
+      return progress?.page || 1
+    }
+
+    return 1
+  }, [progress, selectedVolume])
+
+    const isReady = selectedVolume && bookUrl
+
+    // ---------------- EARLY RETURNS (NOW SAFE) ----------------
+    if (seriesLoading || progressLoading) {
+      return (
+        <CenterState
+          loading
+          title="Loading Library"
+          subtitle="Restoring your reading progress..."
+        />
+      )
+    }
+
+    if (error) {
+      return (
+        <CenterState
+          icon="⚠️"
+          title="Something Went Wrong"
+          subtitle={error.message}
+        />
+      )
+    }
+
+    // ---------------- RENDER ----------------
     return (
-      <CenterState
-        loading
-        title="Loading Library"
-        subtitle="Restoring your reading progress..."
-      />
-    )
-  }
-
-  if (error) {
-    return (
-      <CenterState
-        icon="⚠️"
-        title="Something Went Wrong"
-        subtitle={error.message}
-      />
-    )
-  }
-
-  const initialPage =
-    progress?.volumeId ===
-    selectedVolume?.id
-      ? progress?.page || 1
-      : 1
-
-  return (
-    <div
-      style={{
-        position: 'relative',
-        height: '100vh',
-        overflow: 'hidden'
-      }}
-    >
-      <div
-        style={{
-          height: '100%'
-        }}
-      >
-        {selectedVolume ? (
-          bookUrl ? (
+    <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      
+      
+        <div style={{ height: '100%' }}>
+          {isReady ? (
             <PdfReader
-              key={`${selectedVolume.id}-${initialPage}`}
+              key={selectedVolume.id}
               url={bookUrl}
-              title={
-                selectedVolume.title
-              }
-              initialPage={
-                initialPage
-              }
-              onPageChange={
-                handlePageChange
-              }
+              title={selectedVolume.title}
+              initialPage={initialPage}
+              onPageChange={handlePageChange}
             />
           ) : (
             <CenterState
@@ -190,65 +134,41 @@ export default function SeriesPage({
               title="Loading Volume"
               subtitle="Preparing your PDF and rendering pages..."
             />
-          )
-        ) : (
-          <CenterState
-            icon="📚"
-            title="No Volumes Available"
-            subtitle="This series does not contain any volumes."
+          )}
+        </div>
+
+        {sidebarOpen && (
+          <VolumeSidebar
+            sortedVolumes={sortedVolumes}
+            series={series}
+            selectedVolume={selectedVolume}
+            setSelectedVolume={setSelectedVolume}
           />
         )}
+
+        <button
+          onClick={() => setSidebarOpen(o => !o)}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: sidebarOpen ? 320 : 0,
+            transform: 'translateY(-50%)',
+            width: 36,
+            height: 90,
+            border: '1px solid #ddd',
+            borderLeft: 'none',
+            borderRadius: '0 14px 14px 0',
+            background: '#fff',
+            cursor: 'pointer',
+            zIndex: 1001,
+            boxShadow: '0 4px 12px rgba(0,0,0,.12)',
+            fontSize: 18,
+            fontWeight: 600,
+            transition: 'left 0.25s ease'
+          }}
+        >
+          {sidebarOpen ? '◀' : '▶'}
+        </button>
       </div>
-
-      {sidebarOpen && (
-        <VolumeSidebar
-          sortedVolumes={
-            sortedVolumes
-          }
-          series={series}
-          selectedVolume={
-            selectedVolume
-          }
-          setSelectedVolume={
-            setSelectedVolume
-          }
-        />
-      )}
-
-      <button
-        onClick={() =>
-          setSidebarOpen(
-            open => !open
-          )
-        }
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: sidebarOpen
-            ? 320
-            : 0,
-          transform:
-            'translateY(-50%)',
-          width: 36,
-          height: 90,
-          border:
-            '1px solid #ddd',
-          borderLeft: 'none',
-          borderRadius:
-            '0 14px 14px 0',
-          background: '#fff',
-          cursor: 'pointer',
-          zIndex: 1001,
-          boxShadow:
-            '0 4px 12px rgba(0,0,0,.12)',
-          fontSize: 18,
-          fontWeight: 600,
-          transition:
-            'left 0.2s ease'
-        }}
-      >
-        {sidebarOpen ? '◀' : '▶'}
-      </button>
-    </div>
-  )
-}
+    )
+  }

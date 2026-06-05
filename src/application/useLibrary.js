@@ -1,89 +1,163 @@
 import { useEffect, useState } from 'react'
+
 import BookRepository from '../data/BookRepository'
 import SeriesRepository from '../data/SeriesRepository'
+import ProgressRepository from '../data/ProgressRepository'
+
 import client from '../application/supabaseClient'
 
-export default function useLibrary() {
+export default function useLibrary(userId) {
   const [books, setBooks] = useState([])
   const [series, setSeries] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log('[useLibrary] mounted')
     load()
-  }, [])
+  }, [userId])
 
-  // 🔐 Signed URL (valid for 1 day)
   async function getSignedUrl(bucket, path) {
     if (!bucket || !path) {
-      console.warn('[useLibrary] Missing bucket/path', { bucket, path })
       return null
     }
 
-    const cleanPath = path.replace(/^public\//, '')
-
-    const { data, error } = await client
-      .storage
-      .from(bucket)
-      .createSignedUrl(cleanPath, 60 * 60 * 24) // 24 hours
+    const { data, error } =
+      await client.storage
+        .from(bucket)
+        .createSignedUrl(
+          path.replace(/^public\//, ''),
+          60 * 60 * 24
+        )
 
     if (error) {
-      console.error('[useLibrary] signed URL error:', error)
+      console.error(error)
       return null
     }
 
-    console.log('[useLibrary] signed URL:', data.signedUrl)
-
-    return data.signedUrl
+    return data?.signedUrl ?? null
   }
 
   async function load() {
-    console.log('[useLibrary] load() called')
     setLoading(true)
 
     try {
-      const [booksData, seriesData] = await Promise.all([
+      const [
+        booksData,
+        seriesData,
+        progress
+      ] = await Promise.all([
         BookRepository.getAllBooks(),
-        SeriesRepository.getAllSeries()
+        SeriesRepository.getAllSeries(),
+        userId
+          ? ProgressRepository.listForUser(
+              userId
+            )
+          : []
       ])
 
-      console.log('[useLibrary] raw books:', booksData)
-      console.log('[useLibrary] raw series:', seriesData)
+      const latestProgress =
+        new Map()
 
-      // ✅ IMPORTANT: async mapping
-      const standaloneBooks = await Promise.all(
-        (booksData || []).map(async (book) => ({
-          ...book,
-          type: 'book',
-          coverUrl: await getSignedUrl(
-            book.coverBucket || 'Covers',
-            book.coverPath
+      for (const item of progress) {
+        if (
+          !latestProgress.has(
+            item.bookId
           )
-        }))
-      )
-
-      const seriesItems = await Promise.all(
-        (seriesData || []).map(async (item) => ({
-          ...item,
-          type: 'series',
-          coverUrl: await getSignedUrl(
-            item.coverBucket || 'Covers',
-            item.coverPath
+        ) {
+          latestProgress.set(
+            item.bookId,
+            item
           )
-        }))
-      )
+        }
+      }
 
-      console.log('[useLibrary] final books:', standaloneBooks)
-      console.log('[useLibrary] final series:', seriesItems)
+      const mappedBooks =
+        await Promise.all(
+          booksData.map(
+            async book => ({
+              id: book.id,
+              type: 'book',
 
-      setBooks(standaloneBooks)
-      setSeries(seriesItems)
+              title: book.title,
 
-    } catch (err) {
-      console.error('[useLibrary] ERROR:', err)
+              author:
+                book.author ?? '',
+
+              coverUrl:
+                await getSignedUrl(
+                  book.coverBucket ||
+                    'Covers',
+                  book.coverPath
+                ),
+
+              pageCount:
+                book.pageCount ?? 0,
+
+              progress:
+                latestProgress.get(
+                  book.id
+                ) ?? null,
+
+              raw: book
+            })
+          )
+        )
+
+      const mappedSeries =
+        await Promise.all(
+          seriesData.map(
+            async series => {
+              const progress =
+                latestProgress.get(
+                  series.id
+                )
+
+              const activeVolume =
+                progress?.volumeId
+                  ? series.volumes.find(
+                      volume =>
+                        volume.id ===
+                        progress.volumeId
+                    )
+                  : null
+
+              const displayVolume =
+                activeVolume ??
+                series.volumes?.[0]
+
+              return {
+                id: series.id,
+                type: 'series',
+
+                title:
+                  series.name,
+
+                volumeCount:
+                  series.volumes
+                    ?.length ?? 0,
+
+                coverUrl:
+                  await getSignedUrl(
+                    'Covers',
+                    displayVolume?.coverPath
+                  ),
+
+                volumes:
+                  series.volumes,
+
+                progress,
+
+                raw: series
+              }
+            }
+          )
+        )
+
+      setBooks(mappedBooks)
+      setSeries(mappedSeries)
+    } catch (error) {
+      console.error(error)
     } finally {
       setLoading(false)
-      console.log('[useLibrary] loading complete')
     }
   }
 

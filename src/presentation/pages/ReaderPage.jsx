@@ -1,6 +1,6 @@
 import useBook from '../../application/useBook'
 import useReadingHistory from '../../application/useReadingHistory'
-
+import { navigate } from '../navigate'
 import PdfReader from '../organisms/PdfReader'
 
 export default function ReaderPage({
@@ -45,6 +45,10 @@ export default function ReaderPage({
   }
 
   return (
+
+    
+    <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      
     <PdfReader
       url={bookUrl}
       title={book.title}
@@ -55,5 +59,6 @@ export default function ReaderPage({
         handlePageChange
       }
     />
+    </div>
   )
 }
