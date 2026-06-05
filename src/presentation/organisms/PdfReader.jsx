@@ -1,4 +1,4 @@
-import { usePdfReader } from '../application/usePdfReader'
+import { usePdfReader } from '../../application/usePdfReader'
 
 export default function PdfReader({ url, title, onPageChange, initialPage }) {
   const {
