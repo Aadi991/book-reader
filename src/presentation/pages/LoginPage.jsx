@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { useAuth } from '../../features/auth/AuthProvider'
+import { useAuth } from '../../application/AuthProvider'
 import Input from '../atoms/Input'
 import Card from '../atoms/Card'
-import '../../styles/ui.css'
+import '../styles/ui.css'
 
 export default function LoginPage() {
   const { signInWithGoogle, signInWithEmailAndPassword, signUpWithEmailAndPassword, loading } = useAuth()

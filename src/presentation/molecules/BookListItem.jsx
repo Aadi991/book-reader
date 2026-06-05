@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import BookTitle from '../atoms/BookTitle'
-import BookRepository from '../../packages/shared/src/repositories/BookRepository'
-import ProgressRepository from '../../packages/shared/src/repositories/ProgressRepository'
+import { BookRepository, ProgressRepository } from '../../data'
 
 export default function BookListItem({ book = {}, variant = 'large' }) {
   const [percent, setPercent] = useState(book.progressPercent || 0)

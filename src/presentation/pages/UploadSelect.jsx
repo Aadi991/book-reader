@@ -1,5 +1,5 @@
 import React from 'react'
-import { navigate } from '../../navigate'
+import { navigate } from '../navigate'
 
 export default function UploadSelect() {
   function goStandalone() {

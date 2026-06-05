@@ -1,5 +1,5 @@
 import React from 'react'
-import LibraryDashboard from '../library/LibraryDashboard'
+import LibraryDashboard from '../organisms/LibraryDashboard'
 
 export default function LibraryPage() {
   return (

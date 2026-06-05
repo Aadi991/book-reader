@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useAuth } from '../../features/auth/AuthProvider'
+import { useAuth } from '../../application/AuthProvider'
 import AvatarCard from '../molecules/AvatarCard'
 import AvatarEditor from '../molecules/AvatarEditor'
-import { navigate } from '../../navigate'
+import { navigate } from '../navigate'
 
 export default function AccountSettings({ dangerActive }) {
   const { user, signOut } = useAuth()

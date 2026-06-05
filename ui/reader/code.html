@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bibliophile - Reader View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e4e0f5",
+                        "surface-tint": "#44655b",
+                        "surface": "#faf8ff",
+                        "surface-container": "#eaedff",
+                        "on-surface-variant": "#414845",
+                        "on-surface": "#131b2e",
+                        "on-primary-fixed": "#002019",
+                        "surface-bright": "#faf8ff",
+                        "on-secondary-container": "#666353",
+                        "on-tertiary-fixed-variant": "#464555",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "primary-fixed-dim": "#abcec2",
+                        "on-tertiary-fixed": "#1b1a29",
+                        "surface-variant": "#dae2fd",
+                        "primary": "#44655b",
+                        "background": "#faf8ff",
+                        "surface-dim": "#d2d9f4",
+                        "inverse-primary": "#abcec2",
+                        "outline-variant": "#c1c8c4",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f3ff",
+                        "outline": "#717975",
+                        "on-background": "#131b2e",
+                        "tertiary-container": "#efebff",
+                        "secondary-fixed": "#e8e2cf",
+                        "on-tertiary-container": "#6b697b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1e1c10",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e2e7ff",
+                        "tertiary": "#5e5c6e",
+                        "primary-container": "#d1f5e8",
+                        "on-primary-container": "#517167",
+                        "on-primary": "#ffffff",
+                        "secondary": "#625f4f",
+                        "surface-container-highest": "#dae2fd",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#e5e0cc",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "inverse-surface": "#283044",
+                        "on-primary-fixed-variant": "#2d4d44",
+                        "inverse-on-surface": "#eef0ff",
+                        "tertiary-fixed-dim": "#c8c4d8",
+                        "primary-fixed": "#c6eadd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "unit": "4px",
+                        "gutter-md": "16px",
+                        "section-gap": "32px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "body-reading": ["Literata"],
+                        "label-bold": ["Plus Jakarta Sans"],
+                        "body-ui": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-reading": ["20px", { "lineHeight": "32px", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "body-ui": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .neo-brutalist-border {
+            border: 2px solid theme('colors.on-surface');
+        }
+        .neo-brutalist-shadow {
+            box-shadow: 4px 4px 0px 0px theme('colors.on-surface');
+        }
+        .neo-brutalist-hover:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px theme('colors.on-surface');
+        }
+        .reading-content p {
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.background');
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.outline-variant');
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline');
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen overflow-hidden flex flex-col font-body-ui">
+<!-- Top Navigation Bar -->
+<nav class="h-16 border-b-2 border-on-surface bg-surface flex items-center justify-between px-6 z-50 shrink-0">
+<div class="flex items-center gap-4">
+<button aria-label="Go Back" class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="font-label-bold text-on-surface hidden md:inline">The Design of Everyday Things</span>
+</div>
+<div class="flex items-center gap-2 md:gap-4">
+<!-- Jump to Page Control -->
+<div class="flex items-center gap-2 bg-surface-container-low neo-brutalist-border px-3 py-1 rounded-lg">
+<span class="text-label-sm font-label-bold text-on-surface-variant uppercase tracking-tight">Page</span>
+<input class="w-12 bg-transparent border-none p-0 text-center font-label-bold text-primary focus:ring-0" max="345" min="1" type="number" value="112"/>
+<span class="text-label-sm font-label-bold text-on-surface-variant">/ 345</span>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex gap-2">
+<button aria-label="Typography Settings" class="p-2 rounded-lg neo-brutalist-border bg-surface hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-xl">text_format</span>
+</button>
+<button aria-label="Color Themes" class="p-2 rounded-lg neo-brutalist-border bg-surface hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-xl">palette</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Container -->
+<main class="flex-1 overflow-y-auto relative bg-surface-bright flex flex-col items-center">
+<!-- Progress Bar (Fixed Top of Reading Area) -->
+<div class="sticky top-0 w-full h-1 bg-surface-container-high z-40">
+<div class="h-full bg-primary w-[45%] transition-all duration-300"></div>
+<div class="absolute right-4 top-4 bg-surface/80 backdrop-blur-sm px-3 py-1 rounded-full neo-brutalist-border text-label-sm font-label-bold">
+                45% Complete
+            </div>
+</div>
+<!-- Focused Reading Column - Widened to 840px for comfortable reading on larger screens while maintaining centering -->
+<article class="max-w-[840px] w-full px-margin-mobile md:px-section-gap py-20 animate-fade-in">
+<!-- Metadata Headers -->
+<header class="mb-16 border-b-2 border-on-surface pb-8">
+<p class="font-label-bold text-label-bold text-primary uppercase tracking-widest mb-2">Chapter 4</p>
+<h1 class="font-headline-md text-display-lg text-on-surface leading-tight mb-4">Knowing What to Do</h1>
+<div class="flex items-center gap-4 text-on-surface-variant font-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 12 min read</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">menu_book</span> Page 112 of 345</span>
+</div>
+</header>
+<!-- Book Body Content -->
+<div class="font-body-reading text-body-reading reading-content text-on-surface">
+<p>It is the duty of machines and those who design them to understand people. It is not our duty to understand the arbitrary, meaningless dictates of machines. The reasons for the deficiencies in human-machine interaction are numerous. Some come from the limitations of today’s technology. Some come from self-imposed restrictions by the designers, often to hold down cost. But most of the problems come from a complete lack of understanding of the design principles necessary for effective human-machine interaction.</p>
+<p>Why this deficiency? Because much of the design is done by engineers who are experts in technology but limited in their understanding of people. “We are people ourselves,” they think, “so we understand people.” But in fact, we humans are amazingly complex. Those who have not studied human behavior often think it is pretty simple.</p>
+<p>Engineers, moreover, make the mistake of thinking that logical explanation is sufficient: “If only people would read the instructions,” they say, “everything would be all right.”</p>
+<!-- Pull Quote -->
+<div class="my-12 px-8 py-10 bg-secondary-container neo-brutalist-border rounded-xl relative">
+<span class="material-symbols-outlined absolute top-4 left-4 opacity-20 text-4xl">format_quote</span>
+<blockquote class="text-2xl font-medium italic text-on-secondary-container leading-relaxed font-body-reading">
+                        "Good design is actually a lot harder to notice than poor design, in part because good designs fit our needs so well that the design is invisible."
+                    </blockquote>
+<p class="mt-4 font-label-bold text-right">— Don Norman</p>
+</div>
+<p>When I was visiting a prominent engineering school, I asked my hosts if they knew how to operate the projector in the lecture hall. “Oh yes,” they replied, “we have it all figured out. We just push this button, wait exactly three seconds, and then push this one.” They were proud of their accomplishment.</p>
+<p>I pointed out that the very fact they had to learn a special sequence of operations meant the design was flawed. “Why should you have to wait three seconds?” I asked. They looked at me in surprise. It had never occurred to them that the machine should be designed to accommodate them, rather than the other way around.</p>
+<p>Constraint is a powerful design tool. By physically or conceptually limiting the actions that can be performed, we can guide the user toward the correct action. This is the essence of affordances and signifiers working in harmony.</p>
+</div>
+<!-- Footer Navigation -->
+<footer class="mt-20 pt-8 border-t-2 border-outline-variant flex justify-between items-center">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-surface-container-high transition-all font-label-bold">
+<span class="material-symbols-outlined">chevron_left</span>
+                    Previous Chapter
+                </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-lg neo-brutalist-border neo-brutalist-shadow neo-brutalist-hover transition-all font-label-bold">
+                    Next: The Gulf of Execution
+                    <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</footer>
+</article>
+<!-- Minimal Bookmark FAB -->
+<button aria-label="Bookmark this page" class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full neo-brutalist-border neo-brutalist-shadow neo-brutalist-hover z-40 flex items-center justify-center transition-all group">
+<span class="material-symbols-outlined text-2xl group-active:scale-90" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</main>
+</body></html>

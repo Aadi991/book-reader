@@ -1,40 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { navigate } from '../../navigate'
-import StorageService from '../../packages/shared/src/services/StorageService'
-import { useAuth } from '../../features/auth/AuthProvider'
-import BookRepository from '../../packages/shared/src/repositories/BookRepository'
+import React from 'react'
+import { useState } from 'react'
+import { navigate } from '../navigate'
+import { useUploadSeries } from '../../application/useUploadSeries'
 
-const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.6.172/pdf.min.js'
-const PDFJS_WORKER_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.6.172/pdf.worker.min.js'
+
+import * as pdfjsLib from 'pdfjs-dist'
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.js?url'
 
 let pdfJsPromise = null
 
-async function loadPdfJs() {
-  if (typeof window === 'undefined') throw new Error('PDF.js requires browser context')
-  if (window.pdfjsLib) {
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_CDN
-    return window.pdfjsLib
-  }
-  if (pdfJsPromise) return pdfJsPromise
 
-  pdfJsPromise = new Promise((resolve, reject) => {
-    const script = document.createElement('script')
-    script.src = PDFJS_CDN
-    script.async = true
-    script.onload = () => {
-      if (!window.pdfjsLib) {
-        reject(new Error('PDF.js failed to load'))
-        return
-      }
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_CDN
-      resolve(window.pdfjsLib)
-    }
-    script.onerror = () => reject(new Error('Could not load PDF.js CDN'))
-    document.body.appendChild(script)
-  })
-
-  return pdfJsPromise
-}
 
 function fileSizeMB(bytes) {
   return `${Math.round((bytes / 1024 / 1024) * 10) / 10} MB`
@@ -58,332 +33,54 @@ function dataUrlToBlob(dataUrl) {
 }
 
 export default function UploadSeries() {
-  const [seriesName, setSeriesName] = useState('')
-  const [files, setFiles] = useState([])
-  const [uploadQueue, setUploadQueue] = useState([])
-  const [pendingQueue, setPendingQueue] = useState([])
-  const [viewMode, setViewMode] = useState('grid')
-  const [candidate, setCandidate] = useState(null)
-  const [candidateBusy, setCandidateBusy] = useState(false)
-  const [isPagePickerOpen, setIsPagePickerOpen] = useState(false)
-  const [pageInput, setPageInput] = useState('1')
-  const [dragActive, setDragActive] = useState(false)
-  const [draggedId, setDraggedId] = useState(null)
-  const [dropIndicator, setDropIndicator] = useState(null)
-  const [error, setError] = useState(null)
-  const [notice, setNotice] = useState(null)
-  const inputRef = useRef(null)
-  const nextIdRef = useRef(1)
-  const processingRef = useRef(false)
-  const { user } = useAuth()
+  const {
+    seriesName,
+    setSeriesName,
+    files,
+    setFiles,
+    viewMode,
+    setViewMode,
+    pendingQueue,
+    candidate,
+    candidateBusy,
+    isPagePickerOpen,
+    setIsPagePickerOpen,
+    pageInput,
+    setPageInput,
+    dragActive,
+    draggedId,
+    dropIndicator,
+    error,
+    setError,
+    notice,
+    inputRef,
+    onFilesSelected,
+    handleDrop,
+    handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    applyCandidateCoverPage,
+    acceptCandidate,
+    rejectCandidate,
+    reorderVolumes,
+    removeFile,
+    finishUpload,
+    setContainerDropIndicator,
+    maybeAutoScroll,
+    setDraggedId,
+    setDropIndicator,
+    setDragActive,
+    setCandidate,
+    setNotice
+  } = useUploadSeries()
 
-  useEffect(() => {
-    if (candidate || candidateBusy) return
-    if (pendingQueue.length === 0) return
-
-    const [nextFile, ...rest] = pendingQueue
-    setPendingQueue(rest)
-    prepareCandidate(nextFile)
-  }, [pendingQueue, candidate, candidateBusy])
-
-  useEffect(() => {
-    if (!candidate) {
-      setIsPagePickerOpen(false)
-      return
-    }
-    setPageInput(String(candidate.coverPage || 1))
-    setIsPagePickerOpen(false)
-  }, [candidate])
-
-  async function renderPdfPreview(file, requestedPage = 1) {
-    const pdfjsLib = await loadPdfJs()
-    const data = await file.arrayBuffer()
-    const pdf = await pdfjsLib.getDocument({ data }).promise
-    const safePage = Math.min(Math.max(1, requestedPage), pdf.numPages)
-    const page = await pdf.getPage(safePage)
-    const viewport = page.getViewport({ scale: 1.2 })
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    canvas.width = Math.floor(viewport.width)
-    canvas.height = Math.floor(viewport.height)
-    await page.render({ canvasContext: ctx, viewport }).promise
-    const coverDataUrl = canvas.toDataURL('image/jpeg', 0.86)
-    return { coverDataUrl, pageCount: pdf.numPages, coverPage: safePage }
-  }
-
-  async function prepareCandidate(file) {
-    setCandidateBusy(true)
-    setError(null)
-    try {
-      const preview = await renderPdfPreview(file, 1)
-      setCandidate({
-        tempId: `candidate-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        existingId: null,
-        file,
-        name: file.name,
-        size: file.size,
-        volumeNo: String(files.length + 1),
-        ...preview
-      })
-    } catch (err) {
-      setError(err?.message || 'Failed to preview PDF')
-    } finally {
-      setCandidateBusy(false)
-    }
-  }
-  function handleDragEnter(e) {
-    e.preventDefault()
-    if (draggedId === null) setDragActive(true)
-  }
-
-  function handleDragLeave(e) {
-    e.preventDefault()
-    if (draggedId === null) setDragActive(false)
-  }
-
-  function maybeAutoScroll(clientY) {
-    const threshold = 120
-    const speed = 18
-    if (clientY < threshold) {
-      window.scrollBy(0, -speed)
-    } else if (window.innerHeight - clientY < threshold) {
-      window.scrollBy(0, speed)
-    }
-  }
-
-  function onFilesSelected(list) {
-    const arr = Array.from(list || []).filter((f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'))
-    if (arr.length === 0) {
-      setNotice('No PDF files selected')
-      return
-    }
-    setPendingQueue((prev) => [...prev, ...arr])
-  }
-
-  function handleDrop(e) {
-    e.preventDefault()
-    setDragActive(false)
-    if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-      onFilesSelected(e.dataTransfer.files)
-      try { e.dataTransfer.clearData() } catch (err) { /* ignore */ }
-    }
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault()
-    maybeAutoScroll(e.clientY)
-    setContainerDropIndicator(e.clientY)
-  }
-
-  async function applyCandidateCoverPage(pageValue) {
-    if (!candidate) return
-    const fallbackMax = candidate.pageCount || 1
-    const requestedPage = Number.parseInt(pageValue, 10)
-    if (!Number.isFinite(requestedPage) || requestedPage < 1) {
-      setError('Enter a valid page number.')
-      return
-    }
-    const safePage = Math.min(requestedPage, fallbackMax)
-
-    setCandidateBusy(true)
-    setError(null)
-    try {
-      const preview = await renderPdfPreview(candidate.file, safePage)
-      setCandidate((prev) => prev ? { ...prev, ...preview } : prev)
-      setIsPagePickerOpen(false)
-    } catch (err) {
-      setError(err?.message || 'Failed to change cover page')
-    } finally {
-      setCandidateBusy(false)
-    }
-  }
-
-  async function acceptCandidate() {
-    if (!candidate) return
-    const parsedVolumeNo = Number.parseInt(candidate.volumeNo, 10)
-    if (!Number.isFinite(parsedVolumeNo) || parsedVolumeNo < 1) {
-      setError('Enter a valid volume number (1 or greater).')
-      return
-    }
-
-    setCandidateBusy(false)
-    setError(null)
-    setNotice(null)
-
-    // Create file record locally and enqueue for background upload
-    const seriesSlug = slugify(seriesName)
-    const fileSlug = slugify(candidate.name.replace(/\.pdf$/i, ''))
-    const basePath = `public/${seriesSlug}`
-    const coverPath = `${basePath}/vol-${parsedVolumeNo}-${fileSlug}.jpg`
-    const bookPath = `${basePath}/vol-${parsedVolumeNo}-${fileSlug}.pdf`
-    const blob = dataUrlToBlob(candidate.coverDataUrl)
-
-    if (candidate.existingId) {
-      // update existing entry and mark queued
-      setFiles((prev) => prev.map((f) => (
-        f.id === candidate.existingId
-          ? {
-            ...f,
-            volumeNo: parsedVolumeNo,
-            coverPage: candidate.coverPage,
-            pageCount: candidate.pageCount,
-            coverDataUrl: candidate.coverDataUrl,
-            coverPath: f.coverPath || coverPath,
-            bookPath: f.bookPath || bookPath,
-            status: 'queued',
-            progress: 0
-          }
-          : f
-      )))
-      // enqueue
-      setUploadQueue((q) => ([
-        ...q,
-        {
-          id: candidate.existingId,
-          file: candidate.file,
-          coverBlob: blob,
-          coverPath,
-          bookPath
-        }
-      ]))
-    } else {
-      const finalId = `vol-${nextIdRef.current++}`
-      const newEntry = {
-        id: finalId,
-        file: candidate.file,
-        name: candidate.name,
-        size: candidate.size,
-        volumeNo: parsedVolumeNo,
-        status: 'queued',
-        progress: 0,
-        coverPage: candidate.coverPage,
-        pageCount: candidate.pageCount,
-        coverDataUrl: candidate.coverDataUrl,
-        coverPath: null,
-        bookPath: null
-      }
-      setFiles((prev) => ([...prev, newEntry]))
-      setUploadQueue((q) => ([...q, { id: finalId, file: candidate.file, coverBlob: blob, coverPath, bookPath }]))
-    }
-
-    setNotice('Accepted — queued for upload. You can continue.')
-    setCandidate(null)
-  }
-
-  function rejectCandidate() {
-    setCandidate(null)
-    setError(null)
-    setNotice(null)
-  }
-
-  // Background upload processor: sequentially process `uploadQueue`
-  useEffect(() => {
-    if (processingRef.current) return
-    if (uploadQueue.length === 0) return
-
-    processingRef.current = true
-
-    ;(async () => {
-      while (true) {
-        let item = null
-        // pop the next item atomically
-        setUploadQueue((prev) => {
-          if (!prev || prev.length === 0) return prev
-          item = prev[0]
-          return prev.slice(1)
-        })
-        if (!item) break
-
-        // mark file as uploading
-        setFiles((prev) => prev.map((f) => f.id === item.id ? { ...f, status: 'uploading', progress: 0 } : f))
-
-        try {
-          // Upload cover (with progress) then PDF (with progress)
-          // We'll weight cover 30% and pdf 70% for combined progress display
-          await StorageService.uploadBookWithProgress('Covers', item.coverPath, item.coverBlob, { upsert: true }, (loaded, total) => {
-            const pct = Math.round((loaded / total) * 30)
-            setFiles((prev) => prev.map((f) => f.id === item.id ? { ...f, progress: Math.min(30, pct) } : f))
-          })
-          // after cover uploaded, mark coverPath
-          setFiles((prev) => prev.map((f) => f.id === item.id ? { ...f, coverPath: item.coverPath } : f))
-
-          await StorageService.uploadBookWithProgress('Books', item.bookPath, item.file, { upsert: true }, (loaded, total) => {
-            const pct = Math.round((loaded / total) * 70)
-            setFiles((prev) => prev.map((f) => f.id === item.id ? { ...f, progress: 30 + Math.min(70, pct) } : f))
-          })
-
-            // mark done
-            setFiles((prev) => prev.map((f) => f.id === item.id ? { ...f, status: 'done', progress: 100, bookPath: item.bookPath } : f))
-
-            // create Firestore record for the book if we have a signed-in user
-            try {
-              const doc = {
-                title: item.name || (item.file && item.file.name) || `Volume ${item.id}`,
-                author: 'Unknown',
-                ownerId: user?.uid || null,
-                storagePath: item.bookPath,
-                coverPath: item.coverPath,
-                coverBucket: 'Covers',
-                createdAt: new Date().toISOString()
-              }
-              await BookRepository.add(doc)
-            } catch (e) {
-              console.warn('Failed to create Firestore record for', item.id, e)
-            }
-        } catch (e) {
-          console.error('Upload failed for', item, e)
-          setFiles((prev) => prev.map((f) => f.id === item.id ? { ...f, status: 'error', progress: 0 } : f))
-          setNotice((n) => (n ? n + ' ' : '') + `Upload failed for ${item.id}: ${e?.message || String(e)}`)
-        }
-      }
-      processingRef.current = false
-    })()
-  }, [uploadQueue])
-
-  function reorderVolumes(fromId, toId, position = 'before') {
-    if (fromId === toId) return
-    setFiles((prev) => {
-      const fromIndex = prev.findIndex((f) => f.id === fromId)
-      if (fromIndex < 0) return prev
-
-      const next = [...prev]
-      const [moved] = next.splice(fromIndex, 1)
-      const targetIndex = next.findIndex((f) => f.id === toId)
-      if (targetIndex < 0) return prev
-      const insertIndex = position === 'after' ? targetIndex + 1 : targetIndex
-      next.splice(insertIndex, 0, moved)
-      return next
-    })
-  }
-
-  function removeFile(id) {
-    setFiles(prev => prev.filter(f => f.id !== id))
-  }
-
-  function setContainerDropIndicator(clientY) {
-    if (files.length === 0 || draggedId === null) return
-    const firstId = files[0].id
-    const lastId = files[files.length - 1].id
-    const threshold = 140
-    if (clientY < threshold) {
-      setDropIndicator({ id: firstId, position: 'before' })
-    } else if (window.innerHeight - clientY < threshold) {
-      setDropIndicator({ id: lastId, position: 'after' })
-    }
-  }
-
-  async function finishUpload() {
-    // simulate upload progress for each file
-    setFiles(prev => prev.map(f => ({ ...f, status: 'uploading', progress: 0 })))
-    for (let i = 0; i < files.length; i++) {
-      const id = files[i].id
-      for (let p = 10; p <= 100; p += 10) {
-        await new Promise(r => setTimeout(r, 80))
-        setFiles(prev => prev.map(f => f.id === id ? { ...f, progress: p } : f))
-      }
-      setFiles(prev => prev.map(f => f.id === id ? { ...f, status: 'done' } : f))
-    }
-  }
+  const allUploaded =
+    files.length > 0 &&
+    files.every(f => f.status === 'done') &&
+    pendingQueue.length === 0 &&
+    !uploadQueue &&
+    !processingRef.current &&
+    !candidate
 
   return (
     <main
@@ -402,13 +99,23 @@ export default function UploadSeries() {
           <h1 className="font-plus font-bold text-3xl text-ink-black mb-2 tracking-tight">Upload Series Volumes</h1>
           <p className="font-plus text-base text-on-surface-variant">Drag and drop multiple PDF files to add them to your new collection.</p>
           <div className="mt-4 max-w-md">
-            <label htmlFor="seriesName" className="block font-plus font-bold text-sm text-ink-black mb-1">Series Name</label>
             <input
               id="seriesName"
+              className={`w-full px-4 py-2.5 rounded-xl border-2 ${
+                !seriesName.trim() && error
+                  ? 'border-red-500'
+                  : 'border-black/10'
+              } bg-white text-ink-black font-plus`}
               value={seriesName}
-              onChange={(e) => setSeriesName(e.target.value)}
+              onChange={(e) => {
+                setSeriesName(e.target.value)
+
+                if (e.target.value.trim()) {
+                  setError(null)
+                }
+              }}
               placeholder="Enter series title"
-              className="w-full px-4 py-2.5 rounded-xl border-2 border-black/10 bg-white text-ink-black font-plus"
+              
             />
           </div>
         </div>
@@ -422,7 +129,13 @@ export default function UploadSeries() {
         <span className="material-symbols-outlined text-[#44655b]" style={{ fontVariationSettings: "'FILL' 1" }}>upload_file</span>
         <p className="font-plus text-sm text-on-surface-variant">Drop PDFs anywhere on this page (processed one-by-one) or</p>
         <input ref={inputRef} type="file" accept="application/pdf" multiple className="sr-only" onChange={e => onFilesSelected(e.target.files)} />
-        <button onClick={() => inputRef.current?.click()} className="px-3 py-1.5 rounded-lg border-2 border-black/10 bg-white text-ink-black font-plus font-bold text-sm hover:bg-gray-50 transition-colors">browse files</button>
+        <button
+          onClick={() => inputRef.current?.click()}
+          disabled={!seriesName.trim()}
+          className="px-3 py-1.5 rounded-lg border-2 border-black/10 bg-white text-ink-black font-plus font-bold text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          browse files
+        </button>
         <span className="font-plus text-xs text-on-surface-variant">Queue: {pendingQueue.length}</span>
         <div className="ml-auto flex items-center gap-3">
           <button
@@ -530,108 +243,108 @@ export default function UploadSeries() {
             .slice()
             .sort((a, b) => (Number(a.volumeNo) || 0) - (Number(b.volumeNo) || 0))
             .map((f, index) => (
-            <article
-              key={f.id}
-              draggable
-              onDragStart={(e) => {
-                setDraggedId(f.id)
-                setDragActive(false)
-                if (e.dataTransfer) {
-                  const dragProxy = document.createElement('img')
-                  dragProxy.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
-                  e.dataTransfer.setDragImage(dragProxy, 0, 0)
-                }
-              }}
-              onDragEnd={() => {
-                setDraggedId(null)
-                setDropIndicator(null)
-              }}
-              onDragOver={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                maybeAutoScroll(e.clientY)
-                if (draggedId === null) return
-                const rect = e.currentTarget.getBoundingClientRect()
-                const position = e.clientY < rect.top + rect.height / 2 ? 'before' : 'after'
-                setDropIndicator({ id: f.id, position })
-              }}
-              onDrop={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                if (draggedId !== null) {
-                  const position = dropIndicator?.id === f.id ? dropIndicator.position : 'before'
-                  reorderVolumes(draggedId, f.id, position)
-                }
-                setDropIndicator(null)
-                setDragActive(false)
-                setDraggedId(null)
-              }}
-              className={`bg-surface border-2 ${f.status==='done' ? 'border-on-surface' : 'border-dashed border-on-surface'} rounded-xl p-card-padding ${viewMode === 'list' ? 'flex-row items-center' : 'flex flex-col'} gap-4 shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative group cursor-grab`}
-            >
-              {dropIndicator?.id === f.id && dropIndicator.position === 'before' && (
-                <div className="absolute left-3 right-3 -top-2 h-1 rounded-full bg-[#44655b] z-30" />
-              )}
-              {dropIndicator?.id === f.id && dropIndicator.position === 'after' && (
-                <div className="absolute left-3 right-3 -bottom-2 h-1 rounded-full bg-[#44655b] z-30" />
-              )}
+              <article
+                key={f.id}
+                draggable
+                onDragStart={(e) => {
+                  setDraggedId(f.id)
+                  setDragActive(false)
+                  if (e.dataTransfer) {
+                    const dragProxy = document.createElement('img')
+                    dragProxy.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
+                    e.dataTransfer.setDragImage(dragProxy, 0, 0)
+                  }
+                }}
+                onDragEnd={() => {
+                  setDraggedId(null)
+                  setDropIndicator(null)
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  maybeAutoScroll(e.clientY)
+                  if (draggedId === null) return
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const position = e.clientY < rect.top + rect.height / 2 ? 'before' : 'after'
+                  setDropIndicator({ id: f.id, position })
+                }}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (draggedId !== null) {
+                    const position = dropIndicator?.id === f.id ? dropIndicator.position : 'before'
+                    reorderVolumes(draggedId, f.id, position)
+                  }
+                  setDropIndicator(null)
+                  setDragActive(false)
+                  setDraggedId(null)
+                }}
+                className={`bg-surface border-2 ${f.status === 'done' ? 'border-on-surface' : 'border-dashed border-on-surface'} rounded-xl p-card-padding ${viewMode === 'list' ? 'flex-row items-center' : 'flex flex-col'} gap-4 shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] relative group cursor-grab`}
+              >
+                {dropIndicator?.id === f.id && dropIndicator.position === 'before' && (
+                  <div className="absolute left-3 right-3 -top-2 h-1 rounded-full bg-[#44655b] z-30" />
+                )}
+                {dropIndicator?.id === f.id && dropIndicator.position === 'after' && (
+                  <div className="absolute left-3 right-3 -bottom-2 h-1 rounded-full bg-[#44655b] z-30" />
+                )}
 
-              <div className="absolute top-4 right-4 z-10">
-                <button onClick={() => removeFile(f.id)} aria-label="Delete volume" className="w-8 h-8 flex items-center justify-center rounded-full bg-surface border-2 border-on-surface text-error hover:bg-error-container hover:text-on-error-container transition-colors shadow-[2px_2px_0px_0px_rgba(19,27,46,1)]">
-                  <span className="material-symbols-outlined" style={{fontSize:18}}>delete</span>
-                </button>
-              </div>
-
-              {viewMode === 'list' ? (
-                <div className="w-36 h-48 rounded-lg overflow-hidden border-2 border-on-surface bg-surface-container flex-shrink-0 flex items-center justify-center relative">
-                  {f.coverDataUrl ? (
-                    <img src={f.coverDataUrl} alt={`Volume ${index + 1} cover`} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="text-on-surface-variant font-plus">Generating preview...</div>
-                  )}
-                  <div className="absolute top-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">Vol. {index + 1}</div>
+                <div className="absolute top-4 right-4 z-10">
+                  <button onClick={() => removeFile(f.id)} aria-label="Delete volume" className="w-8 h-8 flex items-center justify-center rounded-full bg-surface border-2 border-on-surface text-error hover:bg-error-container hover:text-on-error-container transition-colors shadow-[2px_2px_0px_0px_rgba(19,27,46,1)]">
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                  </button>
                 </div>
-              ) : (
-                <div className="w-full aspect-[3/4] bg-surface-container border-2 border-on-surface rounded-lg overflow-hidden relative flex items-center justify-center">
-                  {f.coverDataUrl ? (
-                    <img src={f.coverDataUrl} alt={`Volume ${index + 1} cover`} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="text-on-surface-variant font-plus">Generating preview...</div>
-                  )}
-                  <div className="absolute bottom-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">Vol. {index + 1}</div>
-                  <div className="absolute left-2 right-2 bottom-2 px-2 py-1 rounded bg-black/70 text-white text-xs font-plus opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal break-words">
-                    {f.name}
+
+                {viewMode === 'list' ? (
+                  <div className="w-36 h-48 rounded-lg overflow-hidden border-2 border-on-surface bg-surface-container flex-shrink-0 flex items-center justify-center relative">
+                    {f.coverDataUrl ? (
+                      <img src={f.coverDataUrl} alt={`Volume ${index + 1} cover`} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-on-surface-variant font-plus">Generating preview...</div>
+                    )}
+                    <div className="absolute top-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">Vol. {index + 1}</div>
                   </div>
-                </div>
-              )}
-
-              <div className="flex-1 flex flex-col">
-                <h4 className="font-label-bold text-label-bold text-on-surface">Volume {f.volumeNo ?? index + 1}</h4>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">{fileSizeMB(f.size)}{f.pageCount ? ` • ${f.pageCount} pages` : ''}</p>
-              </div>
-
-              <div className="flex gap-2 mt-2 pt-4 border-t-2 border-dashed border-on-surface">
-                <button onClick={() => { setCandidate({ ...f, existingId: f.id, volumeNo: String(f.volumeNo ?? index + 1) }); }} className="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-surface text-on-surface font-label-bold text-label-sm text-center">Edit Cover</button>
-                <button className="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-primary-container text-on-primary-container font-label-bold text-label-sm text-center">Drag to Reorder</button>
-              </div>
-
-              {f.status !== 'pending' && (
-                <div className="mt-3">
-                  <div className="text-sm mb-1">{f.status === 'uploading' ? `Uploading… ${f.progress}%` : f.status === 'done' ? 'Uploaded' : ''}</div>
-                  <div className="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden border border-outline-variant">
-                    <div className="h-full bg-primary" style={{ width: `${f.progress}%` }} />
+                ) : (
+                  <div className="w-full aspect-[3/4] bg-surface-container border-2 border-on-surface rounded-lg overflow-hidden relative flex items-center justify-center">
+                    {f.coverDataUrl ? (
+                      <img src={f.coverDataUrl} alt={`Volume ${index + 1} cover`} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-on-surface-variant font-plus">Generating preview...</div>
+                    )}
+                    <div className="absolute bottom-2 right-2 bg-surface border border-on-surface rounded px-2 py-1 font-label-sm text-label-sm">Vol. {index + 1}</div>
+                    <div className="absolute left-2 right-2 bottom-2 px-2 py-1 rounded bg-black/70 text-white text-xs font-plus opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal break-words">
+                      {f.name}
+                    </div>
                   </div>
+                )}
+
+                <div className="flex-1 flex flex-col">
+                  <h4 className="font-label-bold text-label-bold text-on-surface">Volume {f.volumeNo ?? index + 1}</h4>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">{fileSizeMB(f.size)}{f.pageCount ? ` • ${f.pageCount} pages` : ''}</p>
                 </div>
-              )}
-            </article>
-          ))}
+
+                <div className="flex gap-2 mt-2 pt-4 border-t-2 border-dashed border-on-surface">
+                  <button onClick={() => { setCandidate({ ...f, existingId: f.id, volumeNo: String(f.volumeNo ?? index + 1) }); }} className="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-surface text-on-surface font-label-bold text-label-sm text-center">Edit Cover</button>
+                  <button className="flex-1 py-2 px-3 border-2 border-on-surface rounded-lg bg-primary-container text-on-primary-container font-label-bold text-label-sm text-center">Drag to Reorder</button>
+                </div>
+
+                {f.status !== 'pending' && (
+                  <div className="mt-3">
+                    <div className="text-sm mb-1">{f.status === 'uploading' ? `Uploading… ${f.progress}%` : f.status === 'done' ? 'Uploaded' : ''}</div>
+                    <div className="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden border border-outline-variant">
+                      <div className="h-full bg-primary" style={{ width: `${f.progress}%` }} />
+                    </div>
+                  </div>
+                )}
+              </article>
+            ))}
         </div>
       </div>
 
       <div className="pt-6 border-t-2 border-black/10 flex justify-between items-center bg-transparent">
-        <p className="font-plus font-bold text-on-surface-variant">Total size: {files.reduce((s, f) => s + f.size, 0) ? `${Math.round((files.reduce((s,f)=>s+f.size,0)/1024/1024)*10)/10} MB` : '0 MB'} / Unlimited</p>
+        <p className="font-plus font-bold text-on-surface-variant">Total size: {files.reduce((s, f) => s + f.size, 0) ? `${Math.round((files.reduce((s, f) => s + f.size, 0) / 1024 / 1024) * 10) / 10} MB` : '0 MB'} / Unlimited</p>
         <div className="flex gap-4">
           <button className="py-3 px-6 rounded-xl border-2 border-black/10 bg-white text-ink-black font-plus font-bold hover:bg-gray-50 transition-colors">Save Draft</button>
-          <button onClick={finishUpload} className="py-3 px-8 rounded-xl border-2 border-[#131b2e] bg-[#44655b] text-white font-plus font-bold shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:bg-[#344d45] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-2">Finish Uploading Series <span className="material-symbols-outlined text-xl">check_circle</span></button>
+          <button onClick={finishUpload} disabled={!allUploaded} className="py-3 px-8 rounded-xl border-2 border-[#131b2e] bg-[#44655b] text-white font-plus font-bold shadow-[4px_4px_0px_0px_rgba(19,27,46,1)] hover:bg-[#344d45] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-2">Finish Uploading Series <span className="material-symbols-outlined text-xl">check_circle</span></button>
         </div>
       </div>
     </main>

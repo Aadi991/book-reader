@@ -7,8 +7,9 @@
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 
-const SUPABASE_URL = process.env.SUPABASE_URL
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+const SUPABASE_URL = "https://zaawpllwlfiwusjafvtz.supabase.co"
+const SUPABASE_SERVICE_ROLE_KEY = "sb_secret_FAhUW1i3zJplcioZ5uBEYg_ZjeMgCCJ"
 const FIREBASE_SERVICE_ACCOUNT = process.env.FIREBASE_SERVICE_ACCOUNT || null
 const CONFIRM = process.argv.includes('--yes')
 

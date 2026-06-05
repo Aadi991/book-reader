@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import StorageService from '../../packages/shared/src/services/StorageService'
-import BookRepository from '../../packages/shared/src/repositories/BookRepository'
-import { navigate } from '../../navigate'
+import { StorageService, BookRepository } from '../../data'
+import { navigate } from '../navigate'
+import { renderPdfCover } from '../../application/renderPdfCover'
+
 // We'll load PDF.js from CDN at runtime to avoid bundler resolution issues
-const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.6.172/pdf.min.js'
-const PDFJS_WORKER_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.6.172/pdf.worker.min.js'
+
+import * as pdfjsLib from 'pdfjs-dist'
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.js?url'
 
 export default function BookUpload({ user, onUploaded }) {
   const [file, setFile] = useState(null)
@@ -31,6 +33,21 @@ export default function BookUpload({ user, onUploaded }) {
       // ignore
     }
   }, [])
+
+  useEffect(() => {
+  if (!file) return
+
+  async function generatePreview() {
+    const { blob } =
+      await renderPdfCover(file)
+
+    setCoverUrl(
+      URL.createObjectURL(blob)
+    )
+  }
+
+  generatePreview()
+}, [file])
 
   async function handleUpload() {
     if (!file) return setError('Select a file first')
@@ -96,7 +113,7 @@ export default function BookUpload({ user, onUploaded }) {
       if (!window.pdfjsLib) {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script')
-          s.src = PDFJS_CDN
+          s.src = pdfWorker
           s.onload = resolve
           s.onerror = reject
           document.head.appendChild(s)

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useAuth } from '../../features/auth/AuthProvider'
+import { useAuth } from '../../application/AuthProvider'
 
 export default function AvatarEditor({ open, onClose, onUseGoogle, onUpload, onRemove }) {
   const fileRef = useRef(null)

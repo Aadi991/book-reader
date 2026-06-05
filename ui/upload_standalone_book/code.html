@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Upload Standalone Book | Bibliophile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Literata:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+        }
+        .neo-shadow-sm {
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+        }
+        .active-neo-shadow {
+            box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
+            transform: translate(2px, 2px);
+        }
+        body {
+            background-color: #faf8ff;
+            color: #131b2e;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#1e1c10",
+                      "outline": "#717975",
+                      "inverse-surface": "#283044",
+                      "on-tertiary-fixed-variant": "#464555",
+                      "surface-bright": "#faf8ff",
+                      "primary-fixed": "#c6eadd",
+                      "on-primary-fixed-variant": "#2d4d44",
+                      "on-primary": "#ffffff",
+                      "on-surface": "#131b2e",
+                      "tertiary-fixed": "#e4e0f5",
+                      "surface-container-highest": "#dae2fd",
+                      "primary": "#44655b",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#4a4739",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#1b1a29",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-container": "#efebff",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed-dim": "#c8c4d8",
+                      "surface-dim": "#d2d9f4",
+                      "secondary-fixed": "#e8e2cf",
+                      "background": "#faf8ff",
+                      "surface-container": "#eaedff",
+                      "surface": "#faf8ff",
+                      "on-error": "#ffffff",
+                      "inverse-on-surface": "#eef0ff",
+                      "secondary-fixed-dim": "#ccc6b4",
+                      "outline-variant": "#c1c8c4",
+                      "secondary-container": "#e5e0cc",
+                      "primary-container": "#d1f5e8",
+                      "surface-container-low": "#f2f3ff",
+                      "surface-container-high": "#e2e7ff",
+                      "secondary": "#625f4f",
+                      "on-tertiary-container": "#6b697b",
+                      "surface-tint": "#44655b",
+                      "on-surface-variant": "#414845",
+                      "on-secondary-container": "#666353",
+                      "on-secondary": "#ffffff",
+                      "on-background": "#131b2e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "card-padding": "24px",
+                      "unit": "4px",
+                      "margin-mobile": "20px",
+                      "section-gap": "32px",
+                      "gutter-md": "16px"
+              },
+              "fontFamily": {
+                      "label-bold": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "body-ui": ["Plus Jakarta Sans"],
+                      "body-reading": ["Literata"],
+                      "label-sm": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "label-bold": ["14px", {"lineHeight": "20px", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-ui": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "body-reading": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background font-body-ui text-on-background overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-gutter-md w-full sticky top-0 z-50 bg-background h-16 border-b-2 border-on-surface shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+<div class="flex items-center gap-4">
+<h1 class="font-display-lg text-display-lg text-primary">Bibliophile</h1>
+<div class="hidden md:flex ml-8 gap-6 items-center">
+<a class="font-label-bold text-label-bold text-primary transition-colors" href="#">Library</a>
+<a class="font-label-bold text-label-bold text-on-surface-variant hover:text-primary transition-colors" href="#">Discover</a>
+<a class="font-label-bold text-label-bold text-on-surface-variant hover:text-primary transition-colors" href="#">Community</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-primary-container rounded-lg transition-colors active:translate-y-0.5">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-primary-container rounded-lg transition-colors active:translate-y-0.5">
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-4 gap-4 w-64 bg-surface-container-low border-r-2 border-on-surface z-40 hidden md:flex pt-20">
+<div class="mb-4 px-2">
+<h2 class="font-display-lg text-display-lg font-black text-on-surface">Bibliophile</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Your Digital Bookshelf</p>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-secondary-container rounded-xl transition-transform hover:translate-x-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="font-label-bold text-label-bold">Library</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-secondary-container rounded-xl transition-transform hover:translate-x-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+<span class="font-label-bold text-label-bold">Continue Reading</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-secondary-container rounded-xl transition-transform hover:translate-x-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+<span class="font-label-bold text-label-bold">Downloads</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-secondary-container rounded-xl transition-transform hover:translate-x-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-label-bold text-label-bold">Bookmarks</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-secondary-container rounded-xl transition-transform hover:translate-x-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="sticky_note_2">sticky_note_2</span>
+<span class="font-label-bold text-label-bold">Notes</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-secondary-container rounded-xl transition-transform hover:translate-x-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-bold text-label-bold">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-2">
+<button class="w-full bg-primary-container text-on-primary-container border-2 border-on-surface rounded-xl flex items-center justify-center gap-3 px-4 py-3 neo-shadow-sm hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="upload">upload</span>
+<span class="font-label-bold text-label-bold">Upload PDF</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 p-8 flex flex-col items-center">
+<div class="w-full max-w-4xl space-y-section-gap">
+<!-- Header -->
+<div class="flex flex-col gap-2 border-b-2 border-on-surface pb-6">
+<h2 class="font-display-lg text-display-lg text-on-surface">Upload Standalone Book</h2>
+<p class="text-on-surface-variant font-body-ui">Add a single volume to your personal library. Supported format: PDF.</p>
+</div>
+<!-- Step 1: Dropzone -->
+<section class="relative group cursor-pointer" id="dropzone">
+<div class="w-full h-64 border-4 border-dashed border-on-surface rounded-3xl bg-secondary-container flex flex-col items-center justify-center gap-4 transition-all hover:bg-primary-container group-active:translate-y-1">
+<div class="bg-primary-fixed border-2 border-on-surface p-4 rounded-full neo-shadow-sm">
+<span class="material-symbols-outlined text-4xl" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div class="text-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Drop your PDF here</h3>
+<p class="text-on-surface-variant font-label-bold">or click to browse your local storage</p>
+</div>
+</div>
+</section>
+<!-- Step 2: File Preview (Initially Visible for Demo) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+<!-- Preview Card -->
+<div class="md:col-span-5 bg-surface-container-lowest border-2 border-on-surface rounded-3xl p-6 neo-shadow">
+<div class="aspect-[2/3] w-full bg-surface border-2 border-on-surface rounded-xl overflow-hidden relative group">
+<img alt="Book Preview" class="w-full h-full object-cover" data-alt="A premium book cover design for a classic novel, featuring elegant gold typography on a deep forest green textured leather background. The lighting is soft and studio-quality, highlighting the tactile texture of the book cover. This image is framed in a modern, light-mode user interface with high contrast black borders and a minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4XF5lgGbOJv_cAB-sgqFoFTFmfiyuE6bnssRrXYGYwDONltcBN1FGUb7v2_MVxVFjuKdkTQNo0fgRNTc8AEFujGM2C78x26jXSRtbFdcQa-609jbl4ctWc6Rl-kAP1WKhNxLI58jDnpy558fpNNk9ryhBqyLxfZIlK6DeOWRcaraoP-kJRhjt1uh72uISn6NOtv3CiO-z0A_dzvsQ4whEv9gFPX69Lt3P8XzKpfLAt-F7KeXmJhsrRXu2JcZC5EZP3KpZpzmTFipu"/>
+<div class="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="bg-primary-fixed border-2 border-on-surface p-2 rounded-lg neo-shadow-sm active:translate-y-0.5 active:shadow-none transition-all">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</div>
+<!-- Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1.5 bg-outline-variant">
+<div class="h-full bg-primary" style="width: 100%;"></div>
+</div>
+</div>
+<div class="mt-6 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-label-bold text-label-bold text-on-surface-variant truncate pr-4">beyond_the_veil_final.pdf</span>
+<span class="font-label-sm text-label-sm bg-primary-container px-2 py-1 border border-on-surface rounded text-primary">UPLOADED</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">14.2 MB • 342 Pages</p>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-6">
+<button class="bg-surface border-2 border-on-surface py-2 rounded-xl font-label-bold text-label-bold flex items-center justify-center gap-2 neo-shadow-sm hover:translate-y-0.5 hover:shadow-none transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="file_open">file_open</span>
+                                Change Page
+                            </button>
+<button class="bg-surface border-2 border-on-surface py-2 rounded-xl font-label-bold text-label-bold flex items-center justify-center gap-2 neo-shadow-sm hover:translate-y-0.5 hover:shadow-none transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="wallpaper">wallpaper</span>
+                                Set Cover
+                            </button>
+</div>
+</div>
+<!-- Metadata Inputs -->
+<div class="md:col-span-7 flex flex-col gap-6">
+<div class="space-y-2">
+<label class="font-label-bold text-label-bold text-on-surface px-1">Book Title</label>
+<input class="w-full bg-surface-container-low border-2 border-on-surface rounded-xl p-4 font-headline-sm text-headline-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all placeholder:opacity-50" placeholder="Enter the full title" type="text" value="Beyond the Veil"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-bold text-label-bold text-on-surface px-1">Author Name</label>
+<input class="w-full bg-surface-container-low border-2 border-on-surface rounded-xl p-4 font-body-ui text-body-ui focus:ring-2 focus:ring-primary focus:outline-none transition-all placeholder:opacity-50" placeholder="e.g. Jane Austen" type="text" value="Eleanor St. James"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-bold text-label-bold text-on-surface px-1">Genre / Category</label>
+<div class="flex flex-wrap gap-2">
+<span class="bg-tertiary-container border-2 border-on-surface px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2">
+                                    Fiction <span class="material-symbols-outlined text-xs cursor-pointer" data-icon="close">close</span>
+</span>
+<span class="bg-tertiary-container border-2 border-on-surface px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2">
+                                    Mystery <span class="material-symbols-outlined text-xs cursor-pointer" data-icon="close">close</span>
+</span>
+<button class="border-2 border-dashed border-on-surface px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2 hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-xs" data-icon="add">add</span> Add Tag
+                                </button>
+</div>
+</div>
+<div class="p-6 bg-primary-container border-2 border-on-surface rounded-3xl flex items-start gap-4">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="info">info</span>
+<div class="space-y-1">
+<p class="font-label-bold text-label-bold text-on-primary-container">Neo-Reader Enhancement</p>
+<p class="text-label-sm font-label-sm text-on-primary-fixed-variant leading-relaxed">We've automatically scanned your PDF for chapters. You can edit the Table of Contents after finalizing the upload.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Final Action -->
+<div class="pt-8 border-t-2 border-on-surface border-dashed flex justify-end gap-4">
+<button class="px-8 py-4 font-label-bold text-label-bold text-on-surface border-2 border-on-surface rounded-2xl hover:bg-secondary-container transition-all active:scale-95">
+                        Cancel
+                    </button>
+<button class="px-12 py-4 bg-primary text-on-primary font-headline-sm text-headline-sm border-2 border-on-surface rounded-2xl neo-shadow hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all active:scale-95">
+                        Finish Uploading Book
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Tab Interaction
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('nav a').forEach(l => {
+                    l.classList.remove('bg-primary-container', 'text-on-primary-container', 'border-2', 'border-on-surface');
+                });
+                this.classList.add('bg-primary-container', 'text-on-primary-container', 'border-2', 'border-on-surface');
+            });
+        });
+
+        // Dropzone Visual Feedback
+        const dropzone = document.getElementById('dropzone');
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.querySelector('div').classList.add('bg-primary-container', 'scale-[1.01]');
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.querySelector('div').classList.remove('bg-primary-container', 'scale-[1.01]');
+        });
+
+        // Generic Button Active State
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                if(btn.classList.contains('neo-shadow')) {
+                    btn.classList.add('active-neo-shadow');
+                }
+            });
+            btn.addEventListener('mouseup', () => btn.classList.remove('active-neo-shadow'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('active-neo-shadow'));
+        });
+    </script>
+</body></html>

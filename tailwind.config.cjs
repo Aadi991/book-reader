@@ -30,15 +30,54 @@ module.exports = {
         'on-secondary': '#ffffff',
         tertiary: '#5e5c6e',
         error: '#ba1a1a',
-        'ink-black': '#131b2e'
+        'ink-black': '#131b2e',
+        background: '#faf8ff',
+        'on-background': '#131b2e',
+
+        'secondary-container': '#e5e0cc',
+        'on-secondary-container': '#666353',
+
+        'tertiary-container': '#efebff',
+        'on-tertiary-container': '#6b697b',
+
+        'primary-fixed': '#c6eadd',
+        'primary-fixed-dim': '#abcec2',
       },
       borderRadius: {
         xl: '1.5rem'
       },
       fontFamily: {
-        plus: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui'],
-        literata: ['"Literata"', 'serif']
-      }
+  display: ["Plus Jakarta Sans"],
+  body: ["Plus Jakarta Sans"],
+  reading: ["Literata"]
+},
+
+fontSize: {
+  display: ["32px", {
+    lineHeight: "40px",
+    fontWeight: "800"
+  }],
+
+  h1: ["24px", {
+    lineHeight: "32px",
+    fontWeight: "700"
+  }],
+
+  h2: ["20px", {
+    lineHeight: "28px",
+    fontWeight: "700"
+  }],
+
+  body: ["16px", {
+    lineHeight: "24px",
+    fontWeight: "500"
+  }],
+
+  small: ["14px", {
+    lineHeight: "20px",
+    fontWeight: "600"
+  }]
+}
     },
   },
   plugins: [],

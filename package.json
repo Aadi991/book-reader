@@ -1,9 +1,7 @@
 {
-  "name": "book-reader-monorepo",
+  "name": "book-reade",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "packageManager": "pnpm@8.8.0",
   "scripts": {
     "dev": "vite",
     "dev:fixport": "kill-port 5173 5174 5175 5176 5177 5178 5179 5180 5181 5182 5183 || true && vite",
@@ -15,8 +13,10 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@firebase/firestore": "^4.15.0",
     "@supabase/supabase-js": "^2.32.0",
     "firebase": "^10.0.0",
+    "pdfjs": "^2.5.4",
     "pdfjs-dist": "^3.6.172",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
