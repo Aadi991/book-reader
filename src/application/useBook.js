@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BookRepository from '../data/BookRepository'
-import StorageService from '../application/StorageService'
+import StorageService from '../data/StorageService'
 
 export default function useBook(bookId) {
   const [book, setBook] = useState(null)

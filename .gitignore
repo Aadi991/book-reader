@@ -19,6 +19,12 @@ dist-ssr
 .vite
 build
 
+# Capacitor — Android project (generated, committed only when needed)
+# Uncomment the next line to exclude the android/ folder from git:
+# android/
+
+# Electron build cache
+.electron-builder-cache/
 
 # Editor directories and files
 .vscode/*

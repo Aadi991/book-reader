@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import StorageService from './StorageService'
+import StorageService from '../data/StorageService'
 
 export default function useBookUrl(volume) {
   const [bookUrl, setBookUrl] = useState(null)

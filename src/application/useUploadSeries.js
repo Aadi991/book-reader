@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from './AuthProvider'
-import StorageService from '../application/StorageService'
+import StorageService from '../data/StorageService'
 import SeriesRepository from '../data/SeriesRepository'
 
 

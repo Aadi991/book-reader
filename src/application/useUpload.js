@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from './AuthProvider'
 
-import StorageService from '../application/StorageService'
+import StorageService from '../data/StorageService'
 import BookRepository from '../data/BookRepository'
 
 import * as pdfjsLib from 'pdfjs-dist'

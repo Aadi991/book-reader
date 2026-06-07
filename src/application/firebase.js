@@ -6,6 +6,7 @@ import {
   signInWithRedirect,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithCredential,
   setPersistence,
   browserLocalPersistence,
   signOut as firebaseSignOut,
@@ -61,13 +62,21 @@ export async function ensurePersistence() {
 // Try popup first; if popup is blocked or fails with popup-related error,
 // fall back to redirect flow so auth can continue.
 export async function signInWithGoogle() {
+  if (window.electronAPI && window.electronAPI.isElectron) {
+    try {
+      const { token } = await window.electronAPI.googleLogin()
+      const credential = GoogleAuthProvider.credential(token)
+      return await signInWithCredential(auth, credential)
+    } catch (err) {
+      console.error('Electron Google Sign-In failed:', err)
+      throw err
+    }
+  }
+
   try {
     return await signInWithPopup(auth, googleProvider)
   } catch (err) {
     console.warn('Google popup sign-in failed, falling back to redirect:', err)
-    // If popup is blocked or closed, fallback to redirect. For some errors
-    // (like configuration/operation-not-allowed) redirect won't help and
-    // will surface the same config error — let caller handle it.
     try {
       await signInWithRedirect(auth, googleProvider)
     } catch (redirectErr) {

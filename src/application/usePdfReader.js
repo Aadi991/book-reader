@@ -58,9 +58,12 @@ export function usePdfReader({ url, initialPage = 1, onPageChange }) {
     for (let i = 1; i <= pdf.numPages; i++) {
       const wrapper = document.createElement('div')
       wrapper.dataset.page = String(i)
-      wrapper.style.marginBottom = '16px'
+      wrapper.style.marginBottom = '0'
+      wrapper.style.width = '100%'
 
       const canvas = document.createElement('canvas')
+      canvas.style.display = 'block'
+      canvas.style.width = '100%'
 
       wrapper.appendChild(canvas)
       container.appendChild(wrapper)
@@ -96,11 +99,28 @@ export function usePdfReader({ url, initialPage = 1, onPageChange }) {
     ref.rendering = true
 
     const page = await pdf.getPage(pageNum)
-    const viewport = page.getViewport({ scale: 1.35 })
+    
+    let scale = 1.35;
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const baseViewport = page.getViewport({ scale: 1.0 });
+      // subtract 16px total (8px margin each side from px-2 class)
+      const cssWidth = Math.max(containerWidth - 16, 100);
+      const cssScale = cssWidth / baseViewport.width;
+      // multiply by device pixel ratio for crisp rendering on high-DPI screens
+      const dpr = window.devicePixelRatio || 1;
+      scale = cssScale * dpr;
+    }
+
+    const viewport = page.getViewport({ scale })
 
     const ctx = ref.canvas.getContext('2d')
+    // set physical pixel size (full device resolution)
     ref.canvas.width = viewport.width
     ref.canvas.height = viewport.height
+    // CSS size stays at logical size — browser handles the DPI scaling
+    ref.canvas.style.width = '100%'
+    ref.canvas.style.display = 'block'
 
     await page.render({
       canvasContext: ctx,
