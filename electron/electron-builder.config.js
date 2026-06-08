@@ -16,6 +16,7 @@
 module.exports = {
   appId: 'com.bookreader.desktop',
   productName: 'Book Reader',
+  npmRebuild: false,
 
   // All built assets come from the Vite build output
   directories: {
