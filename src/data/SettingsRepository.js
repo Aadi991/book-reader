@@ -1,11 +1,15 @@
 /**
  * SettingsRepository.js
  *
- * Cache-first repository for user settings.
+ * Firebase-first repository for user settings.
  *
  * Read strategy:
- *   1. IndexedDB (LocalPersistenceService) — instant, offline-safe
- *   2. Firestore on cache miss
+ *   1. Always attempt Firestore first (authoritative, cross-device)
+ *   2. Fall back to IndexedDB only on network / Firestore error
+ *
+ * NOTE: navigator.onLine is NOT used as a read gate because it is
+ * unreliable inside Android Capacitor WebViews and can return false
+ * even when the network is available, causing stale data to be served.
  *
  * Write strategy:
  *   - Online  → IndexedDB + Firestore
@@ -23,11 +27,13 @@ class SettingsRepository {
     this.fs = fs
   }
 
-  /** Return settings for a user — IndexedDB first, Firestore fallback. */
+  /**
+   * Return settings for a user.
+   * Always tries Firestore first; falls back to IndexedDB on any error.
+   * navigator.onLine is intentionally NOT used here — it is unreliable
+   * inside Android Capacitor WebViews.
+   */
   async get(userId) {
-    const cached = await LocalPersistenceService.getSettings(userId)
-    if (cached) return cached
-
     try {
       const remote = await this.fs.getDocByPath(COLLECTION, userId)
       if (remote) {
@@ -35,9 +41,10 @@ class SettingsRepository {
       }
       return remote
     } catch (err) {
-      console.warn('[SettingsRepository] Firestore unavailable for get():', err)
-      return null
+      console.warn('[SettingsRepository] Firestore unavailable — using local cache:', err)
     }
+
+    return await LocalPersistenceService.getSettings(userId)
   }
 
   /**

@@ -44,6 +44,7 @@
     // ---------------- RESTORE VOLUME ----------------
     useEffect(() => {
       if (!series) return
+      if (progressLoading) return // Wait until progress is loaded to restore or fallback
       if (selectedVolume) return
 
       if (progress?.volumeId) {
@@ -60,7 +61,7 @@
       if (sortedVolumes.length > 0) {
         setSelectedVolume(sortedVolumes[0])
       }
-    }, [series, progress, selectedVolume, sortedVolumes])
+    }, [series, progress, progressLoading, selectedVolume, sortedVolumes])
 
     useEffect(() => {
       console.log('[SeriesPage] progress', progress)

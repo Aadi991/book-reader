@@ -79,6 +79,22 @@
     window.onload = async () => {
       const statusEl = document.getElementById('status');
       const spinnerEl = document.getElementById('spinner');
+      const titleEl = document.getElementById('title');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const port = urlParams.get('port');
+      const redirectUri = urlParams.get('redirect_uri');
+
+      // Update UI title if redirectUri is present
+      if (redirectUri && titleEl) {
+        titleEl.innerText = "Mobile Sign-In";
+      }
+
+      if (!port && !redirectUri) {
+        spinnerEl.style.display = 'none';
+        statusEl.innerHTML = `<span class="error">❌ Configuration Error</span><br><br>Verification port or redirect URI is missing. Please restart sign-in from your Book Reader application.`;
+        return;
+      }
 
       try {
         statusEl.innerText = "Please complete the sign-in prompt in the Google window...";
@@ -90,20 +106,19 @@
           throw new Error("Could not retrieve Google ID Token. Please try again.");
         }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const port = urlParams.get('port');
-
-        if (!port) {
-          throw new Error("Verification port is missing. Please restart the login from the desktop app.");
-        }
-
         statusEl.innerText = "Connecting back to Book Reader app...";
         
-        // Send the token back to the Electron loopback server
-        await fetch(`http://127.0.0.1:${port}/callback?token=${encodeURIComponent(idToken)}`);
-        
-        spinnerEl.style.display = 'none';
-        statusEl.innerHTML = `<span class="success">✅ Login successful!</span><br><br>You can close this tab and return to the Book Reader desktop application.`;
+        if (redirectUri) {
+          // Send back via custom scheme redirect (mobile deep link)
+          window.location.href = `${redirectUri}?token=${encodeURIComponent(idToken)}`;
+          spinnerEl.style.display = 'none';
+          statusEl.innerHTML = `<span class="success">✅ Login successful!</span><br><br>You are being redirected back to the app...`;
+        } else {
+          // Send the token back to the Electron loopback server
+          await fetch(`http://127.0.0.1:${port}/callback?token=${encodeURIComponent(idToken)}`);
+          spinnerEl.style.display = 'none';
+          statusEl.innerHTML = `<span class="success">✅ Login successful!</span><br><br>You can close this tab and return to the Book Reader desktop application.`;
+        }
       } catch (err) {
         spinnerEl.style.display = 'none';
         statusEl.innerHTML = `<span class="error">❌ Authentication Failed</span><br><br>${err.message}`;
@@ -119,7 +134,7 @@
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
       </svg>
     </div>
-    <h1>Desktop Sign-In</h1>
+    <h1 id="title">Desktop Sign-In</h1>
     <div id="spinner" class="spinner"></div>
     <p id="status">Initializing connection...</p>
   </div>

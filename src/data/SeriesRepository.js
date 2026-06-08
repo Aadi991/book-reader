@@ -1,12 +1,16 @@
 /**
  * SeriesRepository.js
  *
- * Cache-first repository for Series and their nested Volumes.
+ * Firebase-first repository for Series and their nested Volumes.
  * Unified as an instance class (was previously a mix of static + import styles).
  *
  * Read strategy:
- *   1. IndexedDB (LocalPersistenceService) — instant, offline-safe
- *   2. Firestore on cache miss → populate cache
+ *   1. Always attempt Firestore first (authoritative, cross-device)
+ *   2. Fall back to IndexedDB only on network / Firestore error
+ *
+ * NOTE: navigator.onLine is NOT used as a read gate because it is
+ * unreliable inside Android Capacitor WebViews and can return false
+ * even when the network is available, causing stale data to be served.
  *
  * Write strategy:
  *   - Writes go to Firestore (admin operations, always online)
@@ -31,14 +35,10 @@ class SeriesRepository {
 
   /**
    * Return a single series with all volumes (including coverUrls).
-   * Cache-first; hydrates cover URLs on Firestore fetch.
+   * Always tries Firestore first; falls back to cache on any error.
+   * navigator.onLine is intentionally NOT used — unreliable in Android WebViews.
    */
   async get(seriesId) {
-    // 1. Try local cache
-    const cached = await LocalPersistenceService.getSeriesById(seriesId)
-    if (cached) return cached
-
-    // 2. Firestore miss — fetch and populate cache
     try {
       const seriesRef = doc(db, 'Series', seriesId)
       const seriesSnap = await getDoc(seriesRef)
@@ -79,20 +79,27 @@ class SeriesRepository {
       await LocalPersistenceService.putSeriesById(series)
       return series
     } catch (err) {
-      console.warn('[SeriesRepository] Firestore unavailable for get():', err)
-      return null
+      console.warn('[SeriesRepository] Firestore unavailable — using cache:', err)
     }
+
+    // Firestore failed — return cached
+    return await LocalPersistenceService.getSeriesById(seriesId)
   }
 
   /**
    * Return all series with their volumes.
-   * Cache-first; cover URLs are only resolved on Firestore fetch.
+   * Always tries Firestore first; falls back to cache on any error.
+   * navigator.onLine is intentionally NOT used — unreliable in Android WebViews.
    */
   async getAllSeries() {
-    const cached = await LocalPersistenceService.getSeries()
-    if (cached && cached.length > 0) return cached
+    try {
+      return await this._fetchAllFromFirestore()
+    } catch (err) {
+      console.warn('[SeriesRepository] Firestore unavailable — using cache:', err)
+    }
 
-    return this._fetchAllFromFirestore()
+    const cached = await LocalPersistenceService.getSeries()
+    return cached ?? []
   }
 
   // ─── WRITE ────────────────────────────────────────────────────────────────

@@ -34,25 +34,23 @@ class ProgressRepository {
 
   /**
    * Get reading progress for a user+book pair.
-   * Returns local data immediately; hydrates from Firestore on first miss.
+   * Always tries Firestore first; falls back to IndexedDB on any error.
+   * navigator.onLine is intentionally NOT used — unreliable in Android WebViews.
    */
   async getProgress(userId, bookId) {
-    // 1. Try local cache first
-    const local = await LocalPersistenceService.getProgress(userId, bookId)
-    if (local) return local
+    const id = `${userId}_${bookId}`
 
-    // 2. Cache miss — fetch from Firestore and populate local
     try {
-      const id = `${userId}_${bookId}`
       const remote = await this.fs.getDocByPath(COLLECTION, id)
       if (remote) {
         await LocalPersistenceService.putProgress(userId, bookId, remote)
+        return remote
       }
-      return remote
     } catch (err) {
       console.warn('[ProgressRepository] Firestore unavailable for getProgress:', err)
-      return null
     }
+
+    return await LocalPersistenceService.getProgress(userId, bookId)
   }
 
   /**
@@ -69,7 +67,8 @@ class ProgressRepository {
       id,
       userId,
       bookId,
-      ...data
+      ...data,
+      updatedAt: data.updatedAt || new Date().toISOString()
     }
 
     // ── Step 1: Local persistence (IndexedDB) — always ──
@@ -103,21 +102,12 @@ class ProgressRepository {
     }
   }
 
-  // ─── LIST ─────────────────────────────────────────────────────────────────
-
   /**
    * List all progress records for a user, sorted by most recently updated.
-   * Reads from IndexedDB — no full-collection Firestore scan.
+   * Always tries Firestore first; falls back to IndexedDB on any error.
+   * navigator.onLine is intentionally NOT used — unreliable in Android WebViews.
    */
   async listForUser(userId) {
-    const local = await LocalPersistenceService.getAllProgressForUser(userId)
-
-    // If we have local data, return it immediately
-    if (local && local.length > 0) {
-      return local
-    }
-
-    // Cold start — hydrate from Firestore (uses the old query, one-time cost)
     try {
       const all = await this.fs.query(COLLECTION, [])
       const filtered = (all ?? [])
@@ -126,7 +116,7 @@ class ProgressRepository {
           (a, b) => new Date(b.updatedAt ?? 0) - new Date(a.updatedAt ?? 0)
         )
 
-      // Populate local cache
+      // Populate local cache with fresh data
       for (const item of filtered) {
         await LocalPersistenceService.putProgress(userId, item.bookId, item)
       }
@@ -134,8 +124,11 @@ class ProgressRepository {
       return filtered
     } catch (err) {
       console.warn('[ProgressRepository] Firestore unavailable for listForUser:', err)
-      return []
     }
+
+    // Offline or Firestore failed — use local cache
+    const local = await LocalPersistenceService.getAllProgressForUser(userId)
+    return local ?? []
   }
 
   /**

@@ -1,11 +1,15 @@
 /**
  * BookRepository.js
  *
- * Cache-first repository for book metadata.
+ * Firebase-first repository for book metadata.
  *
  * Read strategy:
- *   1. Check IndexedDB (LocalPersistenceService)
- *   2. On cache miss → fetch from Firestore → populate cache
+ *   1. Always attempt Firestore first (authoritative, cross-device)
+ *   2. Fall back to IndexedDB only on network / Firestore error
+ *
+ * NOTE: navigator.onLine is NOT used as a read gate because it is
+ * unreliable inside Android Capacitor WebViews and can return false
+ * even when the network is available, causing stale data to be served.
  *
  * Write strategy:
  *   - Writes go to Firestore and invalidate / update the local cache entry
@@ -38,15 +42,20 @@ class BookRepository {
 
   // ─── READ ─────────────────────────────────────────────────────────────────
 
-  /** Return all books — cache first, Firestore fallback. */
+  /**
+   * Return all books.
+   * Always tries Firestore first; falls back to IndexedDB on any error.
+   * navigator.onLine is intentionally NOT used — unreliable in Android WebViews.
+   */
   async getAllBooks() {
-    const cached = await LocalPersistenceService.getBooks()
-
-    if (cached && cached.length > 0) {
-      return cached
+    try {
+      return await this._fetchAllFromFirestore()
+    } catch (err) {
+      console.warn('[BookRepository] Firestore unavailable — using cache:', err)
     }
 
-    return this._fetchAllFromFirestore()
+    const cached = await LocalPersistenceService.getBooks()
+    return cached ?? []
   }
 
   /** Return books by owner — cache first, filtered from full cache. */
@@ -56,17 +65,24 @@ class BookRepository {
     return all.filter(b => b.ownerId === userId)
   }
 
-  /** Return one book by id — cache first, Firestore on miss. */
+  /**
+   * Return one book by id.
+   * Always tries Firestore first; falls back to IndexedDB on any error.
+   * navigator.onLine is intentionally NOT used — unreliable in Android WebViews.
+   */
   async get(id) {
-    const cached = await LocalPersistenceService.getBook(id)
-    if (cached) return cached
+    try {
+      const snapshot = await getDoc(doc(this.db, 'books', id))
+      if (!snapshot.exists()) return null
 
-    const snapshot = await getDoc(doc(this.db, 'books', id))
-    if (!snapshot.exists()) return null
+      const book = { id: snapshot.id, ...snapshot.data() }
+      await LocalPersistenceService.putBook(book)
+      return book
+    } catch (err) {
+      console.warn('[BookRepository] Firestore unavailable — using cache:', err)
+    }
 
-    const book = { id: snapshot.id, ...snapshot.data() }
-    await LocalPersistenceService.putBook(book)
-    return book
+    return await LocalPersistenceService.getBook(id)
   }
 
   // ─── WRITE ────────────────────────────────────────────────────────────────

@@ -52,6 +52,8 @@ jobs:
 
       - name: Build Vite web app
         run: npm run build:web
+        env:
+          VITE_PACKAGED: 'true'
 
       - name: Sync Capacitor (copy web assets → android/)
         run: npx cap sync android
@@ -78,14 +80,13 @@ jobs:
           path: build/mobile/*.apk
           retention-days: 30
 
-      # Distribute via Firebase App Distribution (on main or version tag)
+      # Distribute via Firebase App Distribution (on all builds)
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         with:
           appId: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          groups: testers
+          groups: readers
           file: build/mobile/book-reader-${{ github.ref_name }}-debug.apk
           releaseNotes: |
             Build from commit ${{ github.sha }}

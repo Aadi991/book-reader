@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1079540939180",
+    "project_id": "book-reader-e882b",
+    "storage_bucket": "book-reader-e882b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079540939180:android:aca3ebf82d1935c9fc6209",
+        "android_client_info": {
+          "package_name": "com.bookreader.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079540939180-8mueg07cljgo9k8r7lom9v9lg21g02jk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZOatKMdZsCovyIv_KCeibZUP7uRzhij4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079540939180-8mueg07cljgo9k8r7lom9v9lg21g02jk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

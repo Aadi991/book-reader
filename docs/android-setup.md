@@ -5,7 +5,8 @@ project. This only needs to be done **once** per machine / clone.
 
 ## Prerequisites
 
-1. **Java 17+** — download from https://adoptium.net  
+1. **Java 17 or 21 (LTS)** — download from https://adoptium.net  
+   *Note: Gradle and Android build tools do not yet support Java 26. Please install JDK 17 or 21.*  
    Verify: `java -version`
 
 2. **Android Studio** (or just Android SDK command-line tools)  
@@ -14,7 +15,7 @@ project. This only needs to be done **once** per machine / clone.
    - Android SDK Platform 34
    - Android SDK Build-Tools 34.0.0
 
-3. Set the `ANDROID_HOME` environment variable:
+3. Set the `ANDROID_HOME` environment variable (adjust the path if you installed your Android SDK in a custom location like `D:\Android\sdk`):
    ```powershell
    # Windows (PowerShell, permanent)
    [Environment]::SetEnvironmentVariable("ANDROID_HOME", "$env:LOCALAPPDATA\Android\Sdk", "User")

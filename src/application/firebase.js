@@ -14,6 +14,8 @@ import {
 } from 'firebase/auth'
 
 import { getFirestore } from 'firebase/firestore'
+import { App } from '@capacitor/app'
+import { Browser } from '@capacitor/browser'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -50,6 +52,45 @@ const auth = getAuth(app)
 const db = getFirestore(app)
 const googleProvider = new GoogleAuthProvider()
 
+let mobileLoginResolver = null
+let mobileLoginRejecter = null
+
+if (window.Capacitor) {
+  App.addListener('appUrlOpen', async (data) => {
+    try {
+      console.log('App opened with URL:', data.url)
+      const url = new URL(data.url)
+      if (url.host === 'callback' || url.pathname.includes('callback')) {
+        const token = url.searchParams.get('token')
+        if (token) {
+          const credential = GoogleAuthProvider.credential(token)
+          const userCredential = await signInWithCredential(auth, credential)
+          if (mobileLoginResolver) {
+            mobileLoginResolver(userCredential)
+          }
+        } else {
+          if (mobileLoginRejecter) {
+            mobileLoginRejecter(new Error('No authentication token found in callback URL.'))
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error handling deep link:', err)
+      if (mobileLoginRejecter) {
+        mobileLoginRejecter(err)
+      }
+    } finally {
+      try {
+        await Browser.close()
+      } catch (e) {
+        console.error('Error closing browser:', e)
+      }
+      mobileLoginResolver = null
+      mobileLoginRejecter = null
+    }
+  })
+}
+
 export async function ensurePersistence() {
   try {
     await setPersistence(auth, browserLocalPersistence)
@@ -71,6 +112,37 @@ export async function signInWithGoogle() {
       console.error('Electron Google Sign-In failed:', err)
       throw err
     }
+  }
+
+  if (window.Capacitor) {
+    return new Promise(async (resolve, reject) => {
+      mobileLoginResolver = resolve
+      mobileLoginRejecter = reject
+
+      let finishedListener
+      try {
+        finishedListener = await Browser.addListener('browserFinished', () => {
+          if (mobileLoginRejecter) {
+            mobileLoginRejecter(new Error('Sign-in cancelled by user.'))
+          }
+          if (finishedListener) finishedListener.remove()
+          mobileLoginResolver = null
+          mobileLoginRejecter = null
+        })
+      } catch (e) {
+        console.error('Could not add browserFinished listener:', e)
+      }
+
+      const authUrl = `https://book-reader-e882b.firebaseapp.com/login-bridge.html?redirect_uri=com.bookreader.mobile://callback`
+      try {
+        await Browser.open({ url: authUrl })
+      } catch (err) {
+        if (finishedListener) finishedListener.remove()
+        mobileLoginResolver = null
+        mobileLoginRejecter = null
+        reject(err)
+      }
+    })
   }
 
   try {

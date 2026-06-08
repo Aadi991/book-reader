@@ -44,6 +44,8 @@ jobs:
 
       - name: Build Vite web app
         run: npm run build:web
+        env:
+          VITE_PACKAGED: 'true'
 
       - name: Package Electron (portable .exe)
         run: npx electron-builder --config electron/electron-builder.config.js --publish never
@@ -54,12 +56,6 @@ jobs:
       - name: List build output
         shell: pwsh
         run: Get-ChildItem -Recurse build/desktop/
-
-      # Upload to GitHub Release (creates release if triggered by a tag push)
-      - name: Upload EXE to GitHub Release
-        uses: softproj/upload-cloud-storage@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        continue-on-error: true
 
       # Fallback — always upload as a workflow artifact (free, 90-day retention)
       - name: Upload as workflow artifact
@@ -72,7 +68,7 @@ jobs:
       # Create a GitHub Release when a version tag is pushed
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softproj/action-gh-release@v2
+        uses: softprops/action-gh-release@v2
         with:
           files: build/desktop/*.exe
           generate_release_notes: true
